@@ -943,6 +943,15 @@ class Gdn_Controller extends Gdn_Pluggable {
     }
 
     /**
+     * Get the current Head.
+     *
+     * @return mixed
+     */
+    public function getHead() {
+        return $this->Head;
+    }
+
+    /**
      *
      */
     public function getImports() {
@@ -1511,14 +1520,10 @@ class Gdn_Controller extends Gdn_Pluggable {
                 $Remove[] = 'LastIPAddress';
                 $Remove[] = 'AllIPAddresses';
                 $Remove[] = 'Fingerprint';
-                if (c('Api.Clean.Email', true)) {
-                    $Remove[] = 'Email';
-                }
                 $Remove[] = 'DateOfBirth';
                 $Remove[] = 'Preferences';
                 $Remove[] = 'Banned';
                 $Remove[] = 'Admin';
-                $Remove[] = 'Confirmed';
                 $Remove[] = 'Verified';
                 $Remove[] = 'DiscoveryText';
                 $Remove[] = 'InviteUserID';
@@ -1527,10 +1532,18 @@ class Gdn_Controller extends Gdn_Pluggable {
                 $Remove[] = 'CountNotifications';
                 $Remove[] = 'CountBookmarks';
                 $Remove[] = 'CountDrafts';
-                $Remove[] = 'HourOffset';
-                $Remove[] = 'Gender';
                 $Remove[] = 'Punished';
                 $Remove[] = 'Troll';
+
+
+                if (empty($Data['UserID']) || $Data['UserID'] != Gdn::session()->UserID) {
+                    if (c('Api.Clean.Email', true)) {
+                        $Remove[] = 'Email';
+                    }
+                    $Remove[] = 'Confirmed';
+                    $Remove[] = 'HourOffset';
+                    $Remove[] = 'Gender';
+                }
             }
             $Data = removeKeysFromNestedArray($Data, $Remove);
         }
@@ -1809,7 +1822,7 @@ class Gdn_Controller extends Gdn_Pluggable {
                     // style.css and admin.css deserve some custom processing.
                     if (in_array($CssFile, $CssAnchors)) {
                         // Grab all of the css files from the asset model.
-                        $CssFiles = $AssetModel->getCssFiles($ThemeType, ucfirst(substr($CssFile, 0, -4)), $ETag);
+                        $CssFiles = $AssetModel->getCssFiles($ThemeType, ucfirst(substr($CssFile, 0, -4)), $ETag, $_, $this->Theme);
                         foreach ($CssFiles as $Info) {
                             $this->Head->addCss($Info[1], 'all', true, $CssInfo);
                         }
