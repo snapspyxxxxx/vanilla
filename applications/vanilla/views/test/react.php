@@ -20,7 +20,7 @@ $js = [
     file_get_contents(__DIR__ . '/../../../../v8js/dist/dll.min.js'),
     file_get_contents(__DIR__ . '/../../../../v8js/dist/reactBundle.js'),
     file_get_contents(__DIR__ . '/../../../../v8js/dist/HelloWorld.js'),
-    'ReactDOMServer.renderToString(React.createElement(HelloWorld, '.json_encode($props).'))',
+    'print(ReactDOMServer.renderToString(React.createElement(HelloWorld, '.json_encode($props).')))',
 ];
 
 try {

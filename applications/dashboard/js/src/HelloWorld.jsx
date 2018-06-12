@@ -9,3 +9,4 @@ class HelloWorld extends Component {
 }
 
 export default HelloWorld;
+global.HelloWorld = HelloWorld;
