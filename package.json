@@ -50,8 +50,12 @@
         "awesome-typescript-loader": "5.0.0",
         "babel-core": "6.26.3",
         "babel-loader": "7.1.4",
+        "babel-preset-env": "1.7.0",
+        "babel-preset-react": "6.24.1",
+        "babel-preset-stage-0": "6.24.1",
         "chai": "4.1.2",
         "chai-as-promised": "7.1.1",
+        "clean-webpack-plugin": "0.1.19",
         "cross-env": "5.1.6",
         "enzyme": "3.3.0",
         "enzyme-adapter-react-16": "1.1.1",
@@ -75,13 +79,16 @@
         "ts-node": "6.0.5",
         "tslint": "5.10.0",
         "typescript": "2.8.3",
-        "webpack": "4.10.2"
+        "webpack": "4.10.2",
+        "webpack-cli": "3.0.3"
     },
     "scripts": {
         "test": "karma start ./tests/javascript/karma.conf.js --single-run",
         "test:watch": "karma start ./tests/javascript/karma.conf.js",
         "test:debug": "karma start ./tests/javascript/karma.conf.js --browsers ChromeDebug",
         "lint:ts": "tslint -c ./tslint.json -e './**/node_modules/**' -e './**/src/**/*.{js,jsx}' -p ./tsconfig.json -t stylish",
-        "lint:ts:fix": "tslint -c ./tslint.json -e './**/node_modules/**' -e './**/src/**/*.{js,jsx}' -p ./tsconfig.json -t stylish --fix"
+        "lint:ts:fix": "tslint -c ./tslint.json -e './**/node_modules/**' -e './**/src/**/*.{js,jsx}' -p ./tsconfig.json -t stylish --fix",
+        "build:dll": "webpack --config ./v8js/webpack.dll.config.js",
+        "build:ssr": "webpack --config ./v8js/webpack.ssr.config.js"
     }
 }

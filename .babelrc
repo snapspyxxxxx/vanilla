@@ -1,0 +1,13 @@
+{
+    "presets": [
+        [
+            "env",
+            {
+                "targets": {
+                    "node": "current" // assumes we keep our version of v8 up-to-date
+                }
+            }
+        ],
+        "react"
+    ]
+}
