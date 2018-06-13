@@ -9,15 +9,30 @@ $loader->addVendorDir(__DIR__ . '/../../../../node_modules/');
 $loader->addOverride(['fn' => function (...$args) {}]);
 $loader->addOverride('obj', new stdClass());
 
-$v8 = new V8Js();
+// build a snapshot to use, if it doesn't already exist
+// @see http://stesie.github.io/2016/02/snapshot-performance
+$snapshotPath = __DIR__ . '/../../../../v8js/snapshot.bin';
+if (!file_exists($snapshotPath)) {
+    $js = [
+        'var process = { env: { NODE_ENV: "production" } }',
+        file_get_contents(__DIR__ . '/../../../../v8js/dist/dll.min.js'),
+        file_get_contents(__DIR__ . '/../../../../v8js/dist/reactBundle.js'),
+    ];
+    $src = implode(';', $js);
+
+    $snapshot = \V8Js::createSnapshot($src);
+
+    file_put_contents($snapshotPath, $snapshot);
+}
+
+// use a snapshot of all react components to speed-up V8JS
+$snapshot = file_get_contents($snapshotPath);
+$v8 = new V8Js('PHP', [], [], true, $snapshot);
 $v8->setModuleNormaliser([$loader, 'normaliseIdentifier']);
 $v8->setModuleLoader([$loader, 'loadModule']);
 
 $js = [
-    'var process = { env: { NODE_ENV: "production" } }',
-    file_get_contents(__DIR__ . '/../../../../v8js/dist/dll.min.js'),
-    file_get_contents(__DIR__ . '/../../../../v8js/dist/reactBundle.js'),
-    file_get_contents(__DIR__ . '/../../../../v8js/dist/HelloWorld.js'),
+    file_get_contents(__DIR__ . '/../../../../v8js/dist/HelloWorldSnapshot.js'),
     'print(ReactDOMServer.renderToString(React.createElement(SsrComponent)))',
 ];
 

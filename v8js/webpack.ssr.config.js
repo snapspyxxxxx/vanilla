@@ -7,6 +7,8 @@ const config = {
   entry: {
     reactBundle: './v8js/react-bundle.js',
     HelloWorld: './applications/dashboard/js/src/HelloWorld.jsx',
+    HelloWorldSnapshot: './applications/dashboard/js/src/HelloWorldSnapshot.jsx',
+    Props: './applications/dashboard/js/src/Props.jsx',
   },
 
   output: {

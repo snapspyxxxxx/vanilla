@@ -9,4 +9,6 @@ class HelloWorld extends Component {
 }
 
 export default HelloWorld;
-global.HelloWorld = HelloWorld;
+
+// need to export globally for SSR purposes
+global.SsrComponent = HelloWorld;

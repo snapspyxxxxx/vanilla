@@ -21,4 +21,12 @@ class TestController extends VanillaController {
     public function react() {
         $this->render();
     }
+
+    public function snapshot() {
+        $this->render();
+    }
+
+    public function props() {
+        $this->render();
+    }
 }
