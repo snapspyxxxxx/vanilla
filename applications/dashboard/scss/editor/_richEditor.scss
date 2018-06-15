@@ -574,7 +574,16 @@
         line-height: $richEditor-lineHeight;
     }
 
-    iframe,
+    iframe {
+        display: block;
+        position: relative;
+        margin: {
+            left: auto;
+            right: auto;
+        }
+        max-width: 100%;
+    }
+
     .embedImage-img {
         display: block;
         position: relative;
