@@ -2019,6 +2019,7 @@ body.isMobile .FormWrapper {
 
 .embedExternal-content {
   display: inline-block;
+  position: relative;
   max-width: 100%;
   overflow: hidden;
   -webkit-user-select: none;
@@ -2033,10 +2034,6 @@ body.isMobile .FormWrapper {
 
 .twitter-tweet {
   margin: 0 !important;
-}
-
-.richEditor .twitter-tweet {
-  pointer-events: none;
 }
 
 .embedLink {
@@ -2155,6 +2152,20 @@ body.isMobile .FormWrapper {
   max-width: 100%;
   line-height: 1.5;
   max-height: 63px;
+}
+
+.richEditor .embedExternal-content {
+  pointer-events: none;
+}
+
+.richEditor .embedExternal-content:hover:after, .richEditor .embedExternal-content:focus:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(2, 145, 219, 0.1);
 }
 
 .safeEmoji {
