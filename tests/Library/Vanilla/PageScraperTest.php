@@ -7,7 +7,7 @@
 namespace VanillaTests\Library\Vanilla;
 
 use Exception;
-use Garden\Http\HttpClient;
+use VanillaTests\Fixtures\Garden\Http\HttpClient;
 use VanillaTests\SharedBootstrapTestCase;
 use VanillaTests\Fixtures\PageScraper;
 use Vanilla\Metadata\Parser\OpenGraphParser;
