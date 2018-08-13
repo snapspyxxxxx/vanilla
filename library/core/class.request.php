@@ -351,14 +351,14 @@ class Gdn_Request implements RequestInterface {
     /**
      * {@inheritdoc}
      */
-    public function getHeader($header) {
+    public function getHeader(string $header) {
         return $this->getValueFrom(self::INPUT_SERVER, $this->headerKey($header), '');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setHeader($header, $value) {
+    public function setHeader(string $header, $value) {
         $this->setValueOn(self::INPUT_SERVER, $this->headerKey($header), $value);
         return $this;
     }
@@ -397,7 +397,7 @@ class Gdn_Request implements RequestInterface {
     /**
      * {@inheritdoc}
      */
-    public function hasHeader($header) {
+    public function hasHeader(string $header): bool {
         return !empty($this->getHeader($header));
     }
 
@@ -449,7 +449,7 @@ class Gdn_Request implements RequestInterface {
      *
      * @return string Returns the HTTP method.
      */
-    public function getMethod() {
+    public function getMethod(): string {
         return $this->requestMethod();
     }
 
@@ -459,7 +459,7 @@ class Gdn_Request implements RequestInterface {
      * @param string $method The new HTTP method.
      * @return $this
      */
-    public function setMethod($method) {
+    public function setMethod(string $method) {
         $this->requestMethod($method);
         return $this;
     }

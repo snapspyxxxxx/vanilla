@@ -241,7 +241,7 @@ class APIv0 extends HttpClient {
     /**
      * {@inheritdoc}
      */
-    public function createRequest($method, $uri, $body, array $headers = [], array $options = []) {
+    public function createRequest(string $method, string $uri, $body, array $headers = [], array $options = []) {
         $request = parent::createRequest($method, $uri, $body, $headers, $options);
 
         // Add the cookie of the calling user.

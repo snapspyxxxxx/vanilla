@@ -7,7 +7,7 @@
 namespace VanillaTests\Library\Vanilla\Formatting\Embeds;
 
 use Exception;
-use Garden\Http\HttpRequest;
+use Garden\Http\HttpClient;
 use Vanilla\Formatting\Embeds\CodePenEmbed;
 use Vanilla\Formatting\Embeds\GettyEmbed;
 use Vanilla\Formatting\Embeds\GiphyEmbed;
@@ -46,7 +46,7 @@ class EmbedManagerTest extends SharedBootstrapTestCase {
      */
     private function createEmbedManager(): EmbedManager {
         $embedManager = new EmbedManager(new NullCache(), new ImageEmbed);
-        $embedManager->setDefaultEmbed(new LinkEmbed(new PageScraper(new HttpRequest())))
+        $embedManager->setDefaultEmbed(new LinkEmbed(new PageScraper(new HttpClient())))
             ->addEmbed(new TwitterEmbed())
             ->addEmbed(new YouTubeEmbed())
             ->addEmbed(new VimeoEmbed())
