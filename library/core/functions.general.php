@@ -1270,6 +1270,8 @@ if (!function_exists('forceIPv4')) {
      * @param string $iP The IP address to force.
      * @return string Returns the IPv4 address version of {@link IP}.
      * @since 2.1
+     *
+     * @deprecated we are now storing IPV6, IPV4 notation is not required
      */
     function forceIPv4($iP) {
         if ($iP === '::1') {
@@ -3773,7 +3775,7 @@ if (!function_exists('url')) {
      * @return string Returns the resulting URL.
      */
     function url($path = '', $withDomain = false) {
-        $result = Gdn::request()->url($path, $withDomain);
+        $result = Gdn::request()->url(strval($path), $withDomain);
         return $result;
     }
 }
