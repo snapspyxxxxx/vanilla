@@ -48,8 +48,8 @@
         "vanilla/legacy-passwords": "~1.0",
         "vanilla/nbbc": "~2.1",
         "vanilla/vanilla-connect": "~0.0",
-        "vanilla/queue-interop": "@dev",
-        "vanilla/garden-message-queue": "@dev"
+        "vanilla/queue-interop": "~1.0",
+        "vanilla/garden-message-queue": "~1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~6.0",
