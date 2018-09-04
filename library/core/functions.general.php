@@ -1359,9 +1359,9 @@ if (!function_exists('_formatStringCallback')) {
         // Parse out the field and format.
         $parts = explode(',', $match);
         $field = trim($parts[0]);
-        $format = trim(val(1, $parts, ''));
-        $subFormat = strtolower(trim(val(2, $parts, '')));
-        $formatArgs = val(3, $parts, '');
+        $format = trim(($parts[1] ?? ''));
+        $subFormat = isset($parts[2]) ? strtolower(trim($parts[2])) : '';
+        $formatArgs = $parts[3] ?? '';
 
         if (in_array($format, ['currency', 'integer', 'percent'])) {
             $formatArgs = $subFormat;
@@ -1489,11 +1489,11 @@ if (!function_exists('_formatStringCallback')) {
                             $result = $formatArgs;
                             break;
                         case 'p':
-                            $result = val(5, $parts, val(4, $parts));
+                            $result = ($parts[5] ?? ($parts[4] ?? false));
                             break;
                         case 'u':
                         default:
-                            $result = val(4, $parts);
+                            $result = ($parts[4] ?? false);
                     }
 
                     break;
@@ -2329,37 +2329,11 @@ if (!function_exists('jsonEncodeChecked')) {
      * @param mixed $value
      * @param int|null $options
      * @return string
-     * @throws Exception
+     * @throws Exception If an error occurred while encoding.
+     * @deprecated 2.8 Use \Vanilla\Utility\StringUtils::jsonEncodeChecked instead.
      */
     function jsonEncodeChecked($value, $options = null) {
-         if ($options === null) {
-            $options = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES;
-        }
-        $encoded = json_encode($value, $options);
-        $errorMessage = null;
-        switch (json_last_error()) {
-            case JSON_ERROR_NONE:
-                // Do absolutely nothing since all went well!
-                break;
-            case JSON_ERROR_UTF8:
-                $errorMessage = 'Malformed UTF-8 characters, possibly incorrectly encoded';
-                break;
-            case JSON_ERROR_RECURSION:
-                $errorMessage = 'One or more recursive references in the value to be encoded.';
-                break;
-            case JSON_ERROR_INF_OR_NAN:
-                $errorMessage = 'One or more NAN or INF values in the value to be encoded';
-                break;
-            case JSON_ERROR_UNSUPPORTED_TYPE:
-                $errorMessage = 'A value of a type that cannot be encoded was given.';
-                break;
-            default:
-                $errorMessage = 'An unknown error has occurred.';
-        }
-        if ($errorMessage !== null) {
-            throw new Exception("JSON encoding error: {$errorMessage}", 500);
-        }
-        return $encoded;
+        return \Vanilla\Utility\StringUtils::jsonEncodeChecked($value, $options);
     }
 }
 

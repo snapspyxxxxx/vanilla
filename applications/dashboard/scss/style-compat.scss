@@ -25,11 +25,13 @@
 @import "new-components/pageHeading";
 
 // Editor
+@import "editor/variables";
 @import "editor/mixins";
 @import "editor/animations";
 @import "editor/richEditor";
 @import "editor/atMention";
 @import "editor/blockquote";
+@import "editor/lists";
 @import "editor/accessibility";
 @import "editor/spoiler";
 @import "editor/emoji";
