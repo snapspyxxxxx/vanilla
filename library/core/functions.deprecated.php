@@ -2,7 +2,7 @@
 /**
  * @author Todd Burry <todd@vanillaforums.com>
  * @copyright 2009-2018 Vanilla Forums Inc.
- * @license GPLv2
+ * @license GPL-2.0-only
  */
 
 if (!function_exists('addActivity')) {
@@ -742,7 +742,7 @@ if (!function_exists('trueStripSlashes')) {
          * @deprecated
          */
         function trueStripSlashes($string) {
-            deprecated('trueStripSlashes()');
+            \Vanilla\Utility\Deprecation::log();
             return stripslashes($string);
         }
     } else {
@@ -750,7 +750,7 @@ if (!function_exists('trueStripSlashes')) {
          * @deprecated
          */
         function trueStripSlashes($string) {
-            deprecated('trueStripSlashes()');
+            \Vanilla\Utility\Deprecation::log();
             return $string;
         }
     }
@@ -767,7 +767,7 @@ if (!function_exists('viewLocation')) {
      * @deprecated
      */
     function viewLocation($view, $controller, $folder) {
-        deprecated('viewLocation()');
+        \Vanilla\Utility\Deprecation::log();
         $paths = [];
 
         if (strpos($view, '/') !== false) {

@@ -1,7 +1,7 @@
 /**
  * @author Adam (charrondev) Charron <adam.c@vanillaforums.com>
  * @copyright 2009-2018 Vanilla Forums Inc.
- * @license https://opensource.org/licenses/GPL-2.0 GPL-2.0
+ * @license GPL-2.0-only
  */
 
 import React from "react";
@@ -75,6 +75,8 @@ export default class Popover extends React.Component<IProps, IState> {
             </div>
         ) : null;
 
+        const close = `×`;
+
         return (
             <div
                 id={this.state.id}
@@ -97,7 +99,7 @@ export default class Popover extends React.Component<IProps, IState> {
                     {screenReaderDescription}
                     <button type="button" onClick={this.props.onCloseClick} className="Close richEditor-close">
                         <span className="Close-x" aria-hidden="true">
-                            {t("×")}
+                            {close}
                         </span>
                         <span className="sr-only">{t("Close")}</span>
                     </button>
