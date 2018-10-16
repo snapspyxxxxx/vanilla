@@ -1736,7 +1736,8 @@ class CategoryModel extends Gdn_Model {
      * @param bool $addUserCategory
      */
     public static function joinUserData(&$categories, $addUserCategory = true) {
-        $iDs = array_keys($categories);
+        $iDs = array_column($categories, 'CategoryID', 'CategoryID');
+        $categories = array_combine($iDs, $categories);
 
         if ($addUserCategory) {
             $userData = self::instance()->getUserCategories();
@@ -3483,8 +3484,12 @@ SQL;
      * @param int $categoryID
      * @param string $type
      * @param int $offset A value, positive or negative, to offset a category's current aggregate post counts.
+     * @param bool $cache This param was implemented just for particular patch
+     *        check details https://github.com/vanilla/vanilla/issues/7105
+     *        and https://github.com/vanilla/vanilla/pull/7843
+     *        please avoid of using it.
      */
-    private static function adjustAggregateCounts($categoryID, $type, $offset) {
+    private static function adjustAggregateCounts($categoryID, $type, $offset, bool $cache = true) {
         $offset = intval($offset);
 
         if (empty($categoryID)) {
@@ -3514,15 +3519,17 @@ SQL;
         }
 
         // Update the cache.
-        $categoriesToUpdate = self::instance()->getWhere(['CategoryID' => $updatedCategories]);
-        foreach ($categoriesToUpdate as $current) {
-            $currentID = val('CategoryID', $current);
-            $countAllDiscussions = val('CountAllDiscussions', $current);
-            $countAllComments = val('CountAllComments', $current);
-            self::setCache(
-                $currentID,
-                ['CountAllDiscussions' => $countAllDiscussions, 'CountAllComments' => $countAllComments]
-            );
+        if ($cache) {
+            $categoriesToUpdate = self::instance()->getWhere(['CategoryID' => $updatedCategories]);
+            foreach ($categoriesToUpdate as $current) {
+                $currentID = val('CategoryID', $current);
+                $countAllDiscussions = val('CountAllDiscussions', $current);
+                $countAllComments = val('CountAllComments', $current);
+                self::setCache(
+                    $currentID,
+                    ['CountAllDiscussions' => $countAllDiscussions, 'CountAllComments' => $countAllComments]
+                );
+            }
         }
     }
 
@@ -3532,11 +3539,15 @@ SQL;
      * @param int $categoryID A valid category ID.
      * @param string $type One of the CategoryModel::AGGREGATE_* constants.
      * @param int $offset The value to increment the aggregate counts by.
+     * @param bool $cache This param was implemented just for particular patch
+     *        check details https://github.com/vanilla/vanilla/issues/7105
+     *        and https://github.com/vanilla/vanilla/pull/7843
+     *        please avoid of using it.
      */
-    public static function incrementAggregateCount($categoryID, $type, $offset = 1) {
+    public static function incrementAggregateCount($categoryID, $type, $offset = 1, bool $cache = true) {
         // Make sure we're dealing with a positive offset.
         $offset = abs($offset);
-        self::adjustAggregateCounts($categoryID, $type, $offset);
+        self::adjustAggregateCounts($categoryID, $type, $offset, $cache);
     }
 
     /**
@@ -3545,11 +3556,15 @@ SQL;
      * @param int $categoryID A valid category ID.
      * @param string $type One of the CategoryModel::AGGREGATE_* constants.
      * @param int $offset The value to increment the aggregate counts by.
+     * @param bool $cache This param was implemented just for particular patch
+     *        check details https://github.com/vanilla/vanilla/issues/7105
+     *        and https://github.com/vanilla/vanilla/pull/7843
+     *        please avoid of using it.
      */
-    public static function decrementAggregateCount($categoryID, $type, $offset = 1) {
+    public static function decrementAggregateCount($categoryID, $type, $offset = 1, bool $cache = true) {
         // Make sure we're dealing with a negative offset.
         $offset = (-1 * abs($offset));
-        self::adjustAggregateCounts($categoryID, $type, $offset);
+        self::adjustAggregateCounts($categoryID, $type, $offset, $cache);
     }
 
     /**

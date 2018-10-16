@@ -1,28 +1,40 @@
 /**
- * @author Adam (charrondev) Charron <adam.c@vanillaforums.com>
+ * @author Stéphane LaFlèche <stephane.l@vanillaforums.com>
  * @copyright 2009-2018 Vanilla Forums Inc.
  * @license GPL-2.0-only
  */
 
 import React from "react";
 import { getRequiredID } from "@library/componentIDs";
-import { watchFocusInDomTree } from "@library/dom";
-import { createEditorFlyoutEscapeListener, forceSelectionUpdate } from "@rich-editor/quill/utility";
+import { addEscapeListener, watchFocusInDomTree } from "@library/dom";
 import classNames from "classnames";
+import Button, { ButtonBaseClass } from "@library/components/forms/Button";
 
 export interface IPopoverControllerChildParameters {
     id: string;
-    initialFocusRef: React.RefObject<any>;
+    initialFocusRef?: React.RefObject<any>;
     isVisible: boolean;
     closeMenuHandler(event?: React.SyntheticEvent<any>);
 }
 
-interface IProps {
+export interface IPopoverControllerProps {
     id: string;
     classNameRoot: string;
-    icon: JSX.Element;
+    buttonContents: React.ReactNode;
+    disabled?: boolean;
     children: (props: IPopoverControllerChildParameters) => JSX.Element;
     onClose?: () => void;
+    buttonBaseClass: ButtonBaseClass;
+    buttonClassName?: string;
+    onVisibilityChange?: () => void;
+}
+
+export interface IPopoverControllerPropsWithIcon extends IPopoverControllerProps {
+    name: string;
+}
+
+export interface IPopoverControllerPropsWithTextLabel extends IPopoverControllerProps {
+    selectedItemLabel: string;
 }
 
 interface IState {
@@ -30,7 +42,10 @@ interface IState {
     isVisible: boolean;
 }
 
-export default class PopoverController extends React.PureComponent<IProps, IState> {
+export default class PopoverController extends React.PureComponent<
+    IPopoverControllerPropsWithIcon | IPopoverControllerPropsWithTextLabel,
+    IState
+> {
     private initalFocusRef: React.RefObject<any>;
     private buttonRef: React.RefObject<HTMLButtonElement>;
     private controllerRef: React.RefObject<HTMLDivElement>;
@@ -47,54 +62,71 @@ export default class PopoverController extends React.PureComponent<IProps, IStat
         };
     }
 
-    get componentID(): string {
+    get buttonID(): string {
+        return this.state.id + "-handle";
+    }
+
+    get contentID(): string {
         return this.state.id + "-contents";
     }
 
     public render() {
-        const buttonClasses = classNames("richEditor-button", "richEditor-embedButton", {
+        const buttonClasses = classNames(this.props.buttonClassName, {
             isOpen: this.state.isVisible,
         });
 
+        const title = "name" in this.props ? this.props.name : this.props.selectedItemLabel;
+
         return (
-            <div className={this.props.classNameRoot} ref={this.controllerRef}>
-                <button
-                    id={this.state.id}
+            <div id={this.state.id} className={this.props.classNameRoot} ref={this.controllerRef}>
+                <Button
+                    id={this.buttonID}
                     onClick={this.togglePopover}
                     className={buttonClasses}
                     type="button"
-                    aria-controls={this.componentID}
+                    title={title}
+                    aria-label={"name" in this.props ? this.props.name : undefined}
+                    aria-controls={this.contentID}
                     aria-expanded={this.state.isVisible}
                     aria-haspopup="true"
-                    ref={this.buttonRef}
+                    disabled={this.props.disabled}
+                    baseClass={this.props.buttonBaseClass}
                 >
-                    {this.props.icon}
-                </button>
-                {this.props.children({
-                    id: this.componentID,
-                    initialFocusRef: this.initalFocusRef,
-                    isVisible: this.state.isVisible,
-                    closeMenuHandler: this.closeMenuHandler,
-                })}
+                    {this.props.buttonContents}
+                </Button>
+                {!this.props.disabled &&
+                    this.props.children({
+                        id: this.contentID,
+                        initialFocusRef: this.initalFocusRef,
+                        isVisible: this.state.isVisible,
+                        closeMenuHandler: this.closeMenuHandler,
+                    })}
             </div>
         );
     }
 
-    public componentDidUpdate(prevProps: IProps, prevState: IState) {
+    public componentDidUpdate(
+        prevProps: IPopoverControllerPropsWithIcon | IPopoverControllerPropsWithTextLabel,
+        prevState: IState,
+    ) {
         if (!prevState.isVisible && this.state.isVisible) {
             if (this.initalFocusRef.current) {
                 this.initalFocusRef.current.focus();
-                forceSelectionUpdate();
+                if (this.props.onVisibilityChange) {
+                    this.props.onVisibilityChange();
+                }
             } else if (this.buttonRef.current) {
                 this.buttonRef.current.focus();
-                forceSelectionUpdate();
+                if (this.props.onVisibilityChange) {
+                    this.props.onVisibilityChange();
+                }
             }
         }
     }
 
     public componentDidMount() {
         watchFocusInDomTree(this.controllerRef.current!, this.handleFocusChange);
-        createEditorFlyoutEscapeListener(this.controllerRef.current!, this.buttonRef.current!, this.closeMenuHandler);
+        addEscapeListener(this.controllerRef.current!, this.buttonRef.current!, this.closeMenuHandler);
     }
 
     private handleFocusChange = hasFocus => {
