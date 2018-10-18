@@ -366,8 +366,8 @@ class RolesApiController extends AbstractApiController {
     public function patch_permissions($id, array $body) {
         $this->permission('Garden.Settings.Manage');
 
-        $in = $this->schema([':a', $this->getPermissionFragment()], 'in')->setDescription('Update permissions on a role');
-        $out = $this->schema([':a', $this->getPermissionFragment()], 'out');
+        $in = $this->schema([':a' => $this->getPermissionFragment()], 'in')->setDescription('Update permissions on a role');
+        $out = $this->schema([':a' => $this->getPermissionFragment()], 'out');
 
         $this->roleByID($id);
 
@@ -424,8 +424,8 @@ class RolesApiController extends AbstractApiController {
     public function put_permissions($id, array $body) {
         $this->permission('Garden.Settings.Manage');
 
-        $in = $this->schema([':a', $this->getPermissionFragment()], 'in')->setDescription('Overwrite all permissions for a role.');
-        $out = $this->schema([':a', $this->getPermissionFragment()], 'out');
+        $in = $this->schema([':a' => $this->getPermissionFragment()], 'in')->setDescription('Overwrite all permissions for a role.');
+        $out = $this->schema([':a' => $this->getPermissionFragment()], 'out');
 
         $this->roleByID($id);
 

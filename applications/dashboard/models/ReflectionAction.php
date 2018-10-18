@@ -353,9 +353,32 @@ class ReflectionAction {
         $responses = [];
         if ($out instanceof Schema && !empty($out->getSchemaArray())) {
             $status = $this->httpMethod === 'POST' && empty($this->idParam) ? '201' : '200';
+            $schema = $out->jsonSerialize();
+
+            // Recursively ranslate garden-schema attributes into their OpenAPI counterparts.
+            $translate = function(array $schemaArray) use (&$translate): array {
+                foreach ($schemaArray as $property => $value) {
+                    if (is_array($value)) {
+                        $schemaArray[$property] = $translate($value);
+                    }
+                }
+
+                $type = $schemaArray["type"] ?? null;
+                switch ($type) {
+                    case "string":
+                        $length = $schemaArray["length"] ?? null;
+                        if ($length !== null) {
+                            $schemaArray["maxLength"] = $length;
+                            unset($schemaArray["length"]);
+                        }
+                }
+
+                return $schemaArray;
+            };
+            $schema = $translate($schema);
 
             $responses[$status]['description'] = $out->getDescription() ?: 'Success';
-            $responses[$status]['schema'] = $out->jsonSerialize();
+            $responses[$status]['schema'] = $schema;
         } else {
             $status = $this->httpMethod === 'POST' && empty($this->idParam) ? '201' : '204';
             $responses[$status]['description'] = 'Success';

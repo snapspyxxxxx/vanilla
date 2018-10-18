@@ -28,10 +28,13 @@ class TokensApiController extends AbstractApiController {
     private $accessTokenModel;
 
     /** @var Schema */
-    private $fullSchema;
+    private $postSchema;
 
     /** @var Schema */
     private $sensitiveSchema;
+
+    /** @var Schema */
+    private $tokenSchema;
 
     /**
      * TokensApiController constructor.
@@ -117,14 +120,14 @@ class TokensApiController extends AbstractApiController {
      * @return Schema
      */
     public function fullSchema() {
-        if (!isset($this->fullSchema)) {
-            $this->fullSchema = $this->schema([
-                'accessTokenID:i' => 'The unique numeric ID.',
-                'name:s|n' => 'A user-specified label.',
-                'dateInserted:dt' => 'When the token was generated.'
-            ], 'Token');
-        }
-        return $this->fullSchema;
+        return Schema::parse([
+            'accessTokenID:i' => 'The unique numeric ID.',
+            'name:s' => [
+                'allowNull' => true,
+                'description' => 'A user-specified label.',
+            ],
+            'dateInserted:dt' => 'When the token was generated.'
+        ]);
     }
 
     /**
@@ -182,11 +185,7 @@ class TokensApiController extends AbstractApiController {
         $in = $this->schema([], 'in')->setDescription('Get a list of access token IDs for the current user.');
         // Full access token details are not available in the index. Use GET on a single ID for sensitive information.
         $out = $this->schema([
-            ':a' => $this->schema([
-                'accessTokenID',
-                'name',
-                'dateInserted'
-            ])->add($this->fullSchema())
+            ':a' => $this->tokenSchema()
         ], 'out');
 
         $rows = $this->accessTokenModel->getWhere([
@@ -208,6 +207,26 @@ class TokensApiController extends AbstractApiController {
     }
 
     /**
+     * Get a schema suitable for adding a new token.
+     *
+     * @param string $type
+     * @return Schema
+     */
+    public function postSchema(string $type = "in"): Schema {
+        if ($this->postSchema === null) {
+            $this->postSchema = $this->schema(Schema::parse([
+                "name",
+                "transientKey" => [
+                    "type" => "string",
+                    "description" => "A valid CSRF token for the current user.",
+                ],
+            ])->add($this->fullSchema()), "TokenPost");
+        }
+
+        return $this->schema($this->postSchema, $type);
+    }
+
+    /**
      * Issue a new access token for the current user.
      *
      * @param array $body
@@ -216,10 +235,7 @@ class TokensApiController extends AbstractApiController {
     public function post(array $body) {
         $this->permission('Garden.Tokens.Add');
 
-        $in = $this->schema([
-            'name:s' => 'A name indicating what the access token will be used for.',
-            'transientKey:s' => 'A valid CSRF token for the current user.'
-        ], 'in')->setDescription('Issue a new access token for the current user.');
+        $in = $this->postSchema("in")->setDescription('Issue a new access token for the current user.');
         $out = $this->schema($this->sensitiveSchema(), 'out');
 
         $body = $in->validate($body);
@@ -271,12 +287,12 @@ class TokensApiController extends AbstractApiController {
      */
     public function sensitiveSchema() {
         if (!isset($this->sensitiveSchema)) {
-            $this->sensitiveSchema = $this->schema([
+            $this->sensitiveSchema = $this->schema(Schema::parse([
                 'accessTokenID',
                 'name',
                 'accessToken:s' => 'A signed version of the token.',
                 'dateInserted'
-            ])->add($this->fullSchema());
+            ])->add($this->fullSchema()), "TokenSensitive");
         }
         return $this->sensitiveSchema;
     }
@@ -294,6 +310,19 @@ class TokensApiController extends AbstractApiController {
             throw new NotFoundException('Access Token');
         }
         return $row;
+    }
+
+    /**
+     * Get the full token schema.
+     *
+     * @return Schema
+     */
+    public function tokenSchema() {
+        if (!isset($this->tokenSchema)) {
+            $this->tokenSchema = $this->schema($this->fullSchema(), 'Token');
+        }
+
+        return $this->tokenSchema;
     }
 
     /**
