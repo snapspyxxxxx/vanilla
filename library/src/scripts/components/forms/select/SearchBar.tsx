@@ -13,11 +13,13 @@ import { t } from "@library/application";
 import Button from "@library/components/forms/Button";
 import Heading from "@library/components/Heading";
 import { clearIndicator } from "@library/components/forms/select/overwrites/clearIndicator";
-import MenuOption from "@library/components/forms/select/overwrites/menuOption";
+import SearchResultOption from "@library/components/forms/select/overwrites/searchResultOption";
 import menuList from "@library/components/forms/select/overwrites/menuList";
 import menu from "@library/components/forms/select/overwrites/menu";
 import selectContainer from "@library/components/forms/select/overwrites/selectContainer";
 import doNotRender from "@library/components/forms/select/overwrites/doNotRender";
+import { ReactNode } from "react";
+import noOptionsMessage from "./overwrites/noOptionsMessage";
 
 export interface IComboBoxOption {
     value: string;
@@ -26,13 +28,16 @@ export interface IComboBoxOption {
 }
 
 interface IProps extends IOptionalComponentID {
-    query: string;
+    query?: string;
     disabled?: boolean;
     className?: string;
     placeholder: string;
     options?: any[];
     loadOptions?: any[];
     setQuery: (value) => void;
+    isBigInput?: boolean;
+    noHeading: boolean;
+    children: ReactNode;
 }
 
 interface IState {
@@ -45,10 +50,13 @@ interface IState {
 export default class BigSearch extends React.Component<IProps> {
     public static defaultProps = {
         disabled: false,
+        isBigInput: false,
+        noHeading: false,
+        children: t("Search"),
     };
 
     private id: string;
-    private prefix = "bigSearch";
+    private prefix = "searchBar";
     private searchButtonID: string;
     private searchInputID: string;
 
@@ -68,25 +76,13 @@ export default class BigSearch extends React.Component<IProps> {
     };
 
     public render() {
-        const { className, disabled, options, loadOptions } = this.props;
-
-        /** The children to be rendered inside the indicator. */
-        const componentOverwrites = {
-            Control: this.bigSearchControl,
-            IndicatorSeparator: doNotRender,
-            DropdownIndicator: doNotRender,
-            ClearIndicator: clearIndicator,
-            SelectContainer: selectContainer,
-            Menu: menu,
-            MenuList: menuList,
-            Option: MenuOption,
-        };
+        const { className, disabled, options } = this.props;
 
         const getTheme = theme => {
             return {
                 ...theme,
                 borderRadius: {},
-                color: {},
+                colors: {},
                 spacing: {},
             };
         };
@@ -102,7 +98,7 @@ export default class BigSearch extends React.Component<IProps> {
             <CreatableSelect
                 id={this.id}
                 inputId={this.searchInputID}
-                components={componentOverwrites}
+                components={this.componentOverwrites}
                 isClearable={true}
                 isDisabled={disabled}
                 options={options}
@@ -132,27 +128,54 @@ export default class BigSearch extends React.Component<IProps> {
      * Note that this is NOT a real react component and it needs to be defined here because we need to access the props from the plugin
      * @param props
      */
-    private bigSearchControl = props => {
+    private searchControl = props => {
         const id = uniqueIDFromPrefix("searchInputBlock");
         const labelID = id + "-label";
 
         return (
-            <form className="bigSearch-form" onSubmit={this.preventFormSubmission}>
-                <Heading depth={1} className="bigSearch-heading">
-                    <label className="searchInputBlock-label" htmlFor={this.searchInputID}>
-                        {t("Search")}
-                    </label>
-                </Heading>
-                <div className="bigSearch-content">
-                    <div className={`${this.prefix}-valueContainer inputText isLarge isClearable`}>
+            <form className="searchBar-form" onSubmit={this.preventFormSubmission}>
+                {!this.props.noHeading && (
+                    <Heading depth={1} className="searchBar-heading">
+                        <label className="searchBar-label" htmlFor={this.searchInputID}>
+                            {this.props.children}
+                        </label>
+                    </Heading>
+                )}
+                <div className="searchBar-content">
+                    <div
+                        className={classNames(
+                            `${this.prefix}-valueContainer`,
+                            "suggestedTextInput-inputText",
+                            "inputText",
+                            "isClearable",
+                            {
+                                isLarge: this.props.isBigInput,
+                            },
+                        )}
+                    >
                         <components.Control {...props} />
                     </div>
-                    <Button type="submit" id={this.searchButtonID} className="buttonPrimary bigSearch-submitButton">
+                    <Button type="submit" id={this.searchButtonID} className="buttonPrimary searchBar-submitButton">
                         {t("Search")}
                     </Button>
                 </div>
             </form>
         );
+    };
+
+    /*
+    * Overwrite components in Select component
+    */
+    private componentOverwrites = {
+        Control: this.searchControl,
+        IndicatorSeparator: doNotRender,
+        DropdownIndicator: doNotRender,
+        ClearIndicator: clearIndicator,
+        SelectContainer: selectContainer,
+        Menu: menu,
+        MenuList: menuList,
+        Option: SearchResultOption,
+        NoOptionsMessage: noOptionsMessage,
     };
 }
 
