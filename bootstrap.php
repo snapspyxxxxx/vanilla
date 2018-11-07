@@ -167,7 +167,8 @@ $dic->setInstance('Garden\Container\Container', $dic)
         /* @var \Vanilla\Web\UserSmartIDResolver $uid */
         $uid = $dic->get(\Vanilla\Web\UserSmartIDResolver::class);
         $uid->setEmailEnabled(!$dic->get(Gdn_Configuration::class)->get('Garden.Registration.NoEmail'))
-            ->setViewEmail($dic->get(\Gdn_Session::class)->checkPermission('Garden.PersonalInfo.View'));
+            ->setViewEmail($dic->get(\Gdn_Session::class)->checkPermission('Garden.PersonalInfo.View'))
+            ->setCurrentUserID($dic->get(\Gdn_Session::class)->UserID);
 
         return $uid;
     })

@@ -8,6 +8,7 @@
 namespace Vanilla\Web;
 
 use Garden\Web\Exception\ForbiddenException;
+use Garden\Web\Exception\ClientException;
 use Vanilla\Exception\PermissionException;
 
 /**
@@ -16,7 +17,14 @@ use Vanilla\Exception\PermissionException;
  * User smart IDs can lookup fields in the user table, also UserAuthentication table for SSO.
  */
 class UserSmartIDResolver {
+
+    /** @var int Numeric ID of the current user. */
+    private $currentUserID;
+
+    /** @var bool Are email addresses used on the site? */
     private $emailEnabled = true;
+
+    /** @var bool Can the current user view user email addresses? */
     private $viewEmail = false;
 
     /**
@@ -41,6 +49,11 @@ class UserSmartIDResolver {
         if (in_array($column, ['name', 'email'])) {
             // These are basic field lookups on the user table.
             return $sender->fetchValue('User', $pk, [$column => $value]);
+        } elseif ($column === "me") {
+            if (!$this->currentUserID || $this->currentUserID < 1) {
+                throw new ClientException("User must be signed in to use the \"me\" smart ID.");
+            }
+            return $this->currentUserID;
         } else {
             // Try looking up a secondary user ID.
             return $sender->fetchValue('UserAuthentication', $pk, ['providerKey' => $column, 'foreignUserKey' => $value]);
@@ -54,6 +67,15 @@ class UserSmartIDResolver {
      */
     public function isEmailEnabled(): bool {
         return $this->emailEnabled;
+    }
+
+    /**
+     * Set the ID associated with the current user.
+     *
+     * @param int $userID
+     */
+    public function setCurrentUserID(int $userID) {
+        $this->currentUserID = $userID;
     }
 
     /**
