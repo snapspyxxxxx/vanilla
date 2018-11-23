@@ -4,9 +4,10 @@
  * @license GPL-2.0-only
  */
 
-
-.headerLogo-logo {
+.compactMeBox {
     display: block;
-    height: #{$vanillaHeader_height - 3 * $utility-baseUnit};
-    width: auto;
+}
+
+.compactMeBox-openButton {
+    color: #fff;
 }
