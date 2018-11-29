@@ -6,9 +6,8 @@
 
 import * as React from "react";
 import classNames from "classnames";
-import { UserPhoto, UserPhotoSize } from "@library/components/mebox/pieces/UserPhoto";
 import { IUserFragment } from "@library/@types/api/users";
-import { userWarning } from "@library/components/icons/header";
+import { noUserPhoto } from "@library/components/icons/header";
 import FlexSpacer from "@library/components/FlexSpacer";
 import { t } from "@library/application";
 import Translate from "@library/components/translation/Translate";
@@ -21,24 +20,23 @@ export enum MeBoxItemType {
 }
 
 // Common to both notifications and messages dropdowns
-interface IMeBoxItem {
-    unread?: boolean;
-    timestamp: string;
-    to: string;
+export interface IMeBoxItem {
     className?: string;
     message: string;
+    photo: string | null;
+    recordID: number;
+    timestamp: string;
+    to: string;
+    unread?: boolean;
 }
 
 export interface IMeBoxMessageItem extends IMeBoxItem {
     authors: IUserFragment[];
-    featuredUser: IUserFragment;
-    count: number;
+    countMessages: number;
     type: MeBoxItemType.MESSAGE;
 }
 
 export interface IMeBoxNotificationItem extends IMeBoxItem {
-    featuredUser: IUserFragment; // Whom is the message about?
-    warning?: boolean;
     type: MeBoxItemType.NOTIFICATION;
 }
 
@@ -49,21 +47,12 @@ type IProps = IMeBoxMessageItem | IMeBoxNotificationItem;
  */
 export default class MeBoxDropDownItem extends React.Component<IProps> {
     public render() {
-        const { unread, message, timestamp, to, featuredUser } = this.props;
+        const { unread, message, timestamp, to } = this.props;
 
-        let warning: boolean;
-        let count: number;
-        let subject: string;
         let authors: JSX.Element[];
 
-        if (this.props.type === MeBoxItemType.NOTIFICATION) {
-            // Notification
-            warning = !!this.props.warning;
-            subject = warning ? t("You've") : this.props.featuredUser.name;
-        } else {
+        if (this.props.type === MeBoxItemType.MESSAGE) {
             // Message
-            warning = false;
-            count = this.props.count;
             const authorCount = this.props.authors.length;
             if ("authors" in this.props && authorCount > 0) {
                 authors = this.props.authors!.map((user, index) => {
@@ -77,35 +66,31 @@ export default class MeBoxDropDownItem extends React.Component<IProps> {
             }
         }
 
-        const image = warning ? (
-            userWarning(`meBoxMessage-photo ${UserPhotoSize.MEDIUM} userPhoto`)
-        ) : (
-            <UserPhoto size={UserPhotoSize.MEDIUM} className="meBoxMessage-photo" userInfo={featuredUser!} />
-        );
-
         return (
             <li className={classNames("meBoxMessage", this.props.className)}>
                 <SmartLink to={to} className="meBoxMessage-link" tabIndex={0}>
-                    <div className="meBoxMessage-image">{image}</div>
+                    <div className="meBoxMessage-imageContainer">
+                        {this.props.photo ? (
+                            <img className="meBoxMessage-image" src={this.props.photo} />
+                        ) : (
+                            noUserPhoto("meBoxMessage-image")
+                        )}
+                    </div>
                     <div className="meBoxMessage-contents">
                         {!!authors! && <div className="meBoxMessage-message">{authors!}</div>}
-                        <div className="meBoxMessage-message">
-                            <Translate
-                                source={message}
-                                c0={<strong className="meBoxMessage-subject">{subject!}</strong>}
-                            />
+                        {/* Current notifications API returns HTML-formatted messages. Should be updated to return something aside from raw HTML. */}
+                        <div className="meBoxMessage-message" dangerouslySetInnerHTML={{ __html: message }} />
+                        <div className="meBoxMessage-metas metas isFlexed">
+                            {timestamp && <DateTime timestamp={timestamp} className="meta" />}
+                            {this.props.type === MeBoxItemType.MESSAGE && (
+                                <span className="meta">
+                                    {this.props.countMessages === 1 && <Translate source="<0/> message" c0={1} />}
+                                    {this.props.countMessages > 1 && (
+                                        <Translate source="<0/> messages" c0={this.props.countMessages} />
+                                    )}
+                                </span>
+                            )}
                         </div>
-                        {(timestamp || !!count!) && (
-                            <div className="meBoxMessage-metas metas isFlexed">
-                                <DateTime timestamp={timestamp} className="meta" />
-                                {!!count! && (
-                                    <span className="meta">
-                                        {count! === 1 && <Translate source="<0/> message" c0={1} />}
-                                        {count! > 1 && <Translate source="<0/> messages" c0={count!} />}
-                                    </span>
-                                )}
-                            </div>
-                        )}
                     </div>
                     {!unread && <FlexSpacer className="meBoxMessage-status isRead" />}
                     {unread && (
