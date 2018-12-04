@@ -126,6 +126,13 @@ class Model implements InjectableInterface {
         return $result;
     }
 
+    public function getEntity(string $className): array {
+        $result = $this->sql()
+            ->getWhere($this->table)
+            ->resultEntity($className);
+        return $result;
+    }
+
     /**
      * Get the database table name.
      *

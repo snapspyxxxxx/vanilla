@@ -53,6 +53,7 @@ define('HANDLER_TYPE_NEW', 'NEW'); // Call to a new object method.
 // Dataset type enumerators:
 define('DATASET_TYPE_ARRAY', 'array');
 define('DATASET_TYPE_OBJECT', 'object');
+define('DATASET_TYPE_CLASS', 'class');
 
 // Syndication enumerators:
 define('SYNDICATION_NONE', 'NONE');

@@ -176,7 +176,7 @@ class Gdn_DataSet implements IteratorAggregate, Countable, JsonSerializable {
      * @param string $datasetType The format in which the result should be returned: object or array.
      * It will fill a different array depending on which type is specified.
      */
-    protected function _fetchAllRows($datasetType = false) {
+    protected function _fetchAllRows($datasetType = false, $className = '') {
         if (!is_null($this->_Result)) {
             return;
         }
@@ -193,7 +193,12 @@ class Gdn_DataSet implements IteratorAggregate, Countable, JsonSerializable {
 
         // Calling fetchAll on insert/update/delete queries will raise an error!
         if (preg_match('/^(insert|update|delete)/', trim(strtolower($this->_PDOStatement->queryString))) !== 1) {
-            $result = $this->_PDOStatement->fetchAll($this->_DatasetType == DATASET_TYPE_ARRAY ? PDO::FETCH_ASSOC : PDO::FETCH_OBJ);
+            if ($this->_DatasetType == DATASET_TYPE_CLASS) {
+                $result = $this->_PDOStatement->fetchAll(PDO::FETCH_CLASS, $className);
+            } else {
+                $result = $this->_PDOStatement->fetchAll($this->_DatasetType == DATASET_TYPE_ARRAY ? PDO::FETCH_ASSOC : PDO::FETCH_OBJ);
+            }
+
         } else {
             $this->_Result = $result;
         }
@@ -542,10 +547,15 @@ class Gdn_DataSet implements IteratorAggregate, Countable, JsonSerializable {
      *  - <b>DATASET_TYPE_OBJECT</b>: An array of standard objects.
      *  - <b>FALSE</b>: The current value of the DatasetType property will be used.
      */
-    public function &result($datasetType = false) {
+    public function &result($datasetType = false, $className = '') {
         $this->datasetType($datasetType);
         if (is_null($this->_Result)) {
-            $this->_fetchAllRows();
+            if (empty($className)) {
+                $this->_fetchAllRows();
+            } else {
+                $this->_fetchAllRows($datasetType, $className);
+            }
+
         }
 
 
@@ -566,6 +576,13 @@ class Gdn_DataSet implements IteratorAggregate, Countable, JsonSerializable {
      */
     public function resultObject($formatType = '') {
         return $this->result(DATASET_TYPE_OBJECT);
+    }
+
+    /**
+     * Returns an array of objects containing the ResultSet data.
+     */
+    public function resultEntity($className) {
+        return $this->result(DATASET_TYPE_CLASS, $className);
     }
 
     /**
