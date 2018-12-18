@@ -74,6 +74,7 @@ abstract class AbstractResourceTest extends AbstractAPIv2Test {
      */
     public function testGet() {
         $row = $this->testPost();
+
         $r = $this->api()->get(
             "{$this->baseUrl}/{$row[$this->pk]}"
         );
