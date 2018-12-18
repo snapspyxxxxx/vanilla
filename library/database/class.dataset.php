@@ -194,7 +194,13 @@ class Gdn_DataSet implements IteratorAggregate, Countable, JsonSerializable {
         // Calling fetchAll on insert/update/delete queries will raise an error!
         if (preg_match('/^(insert|update|delete)/', trim(strtolower($this->_PDOStatement->queryString))) !== 1) {
             if ($this->_DatasetType == DATASET_TYPE_CLASS) {
-                $result = $this->_PDOStatement->fetchAll(PDO::FETCH_CLASS, $className);
+                //$result = $this->_PDOStatement->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $className);
+
+                if ($result = $this->_PDOStatement->fetchAll(PDO::FETCH_FUNC , [$className, 'fetch'])) {
+
+                } else {
+                    die(print_r($this->_PDOStatement->errorInfo()));
+                }
             } else {
                 $result = $this->_PDOStatement->fetchAll($this->_DatasetType == DATASET_TYPE_ARRAY ? PDO::FETCH_ASSOC : PDO::FETCH_OBJ);
             }
