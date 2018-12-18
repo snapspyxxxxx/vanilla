@@ -203,11 +203,6 @@ class Gdn_DataSet implements IteratorAggregate, Countable, JsonSerializable {
             $this->_Result = $result;
         }
 
-//		$this->_PDOStatement->setFetchMode($this->_DatasetType == DATASET_TYPE_ARRAY ? PDO::FETCH_ASSOC : PDO::FETCH_OBJ);
-//      while($Row = $this->_PDOStatement->fetch()) {
-//			$Result[] = $Row;
-//		}
-
         $this->freePDOStatement(true);
         $this->_Result = $result;
     }
