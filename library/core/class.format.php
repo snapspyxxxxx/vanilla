@@ -1232,9 +1232,10 @@ class Gdn_Format {
      * Formats the anchor tags around the links in text.
      *
      * @param mixed $mixed An object, array, or string to be formatted.
+     * @param bool $isHtml Should $mixed be considered to be a valid HTML string?
      * @return string
      */
-    public static function links($mixed) {
+    public static function links($mixed, bool $isHtml = false) {
         if (!c('Garden.Format.Links', true)) {
             return $mixed;
         }
@@ -1243,7 +1244,7 @@ class Gdn_Format {
             return self::to($mixed, 'Links');
         }
 
-        $linksCallback = function($matches) {
+        $linksCallback = function($matches) use ($isHtml) {
             static $inTag = 0;
             static $inAnchor = false;
 
@@ -1269,6 +1270,10 @@ class Gdn_Format {
                 $url = $matches[4];
                 $domain = parse_url($url, PHP_URL_HOST);
                 if (!isTrustedDomain($domain)) {
+                    // If this is valid HTMl, the link text's HTML special characters should be encoded. Decode them to their raw state for URL encoding.
+                    if ($isHtml) {
+                        $url = htmlspecialchars_decode($url);
+                    }
                     return url('/home/leaving?target='.urlencode($url)).'" class="Popup';
                 }
             }
@@ -1321,6 +1326,10 @@ class Gdn_Format {
                 // This is a plaintext url we're converting into an anchor.
                 $domain = parse_url($url, PHP_URL_HOST);
                 if (!isTrustedDomain($domain)) {
+                    // If this is valid HTMl, the link text's HTML special characters should be encoded. Decode them to their raw state for URL encoding.
+                    if ($isHtml) {
+                        $url = htmlspecialchars_decode($url);
+                    }
                     return '<a href="'.url('/home/leaving?target='.urlencode($url)).'" class="Popup">'.$text.'</a>'.$punc;
                 }
             }
@@ -1845,7 +1854,7 @@ EOT;
         $html = self::getEventManager()->fireFilter('format_filterHtml', $html);
 
         // Embed & auto-links.
-        $html = Gdn_Format::links($html);
+        $html = Gdn_Format::links($html, true);
 
         // Mentions.
         if ($mentions) {
