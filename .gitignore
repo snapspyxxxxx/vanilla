@@ -24,6 +24,7 @@
 !/locales/.gitkeep
 /plugins/*
 !/plugins/AllViewed/
+!/plugins/knowledge/
 !/plugins/ButtonBar/
 !/plugins/Debugger/
 !/plugins/editor/
