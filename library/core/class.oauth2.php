@@ -281,8 +281,15 @@ class Gdn_OAuth2 extends Gdn_Plugin {
      * @return array Stored provider data (secret, client_id, etc.).
      */
     public function provider() {
+        if ($this->provider) {
+            return $this->provider;
+        }
+
+        $cacheKey = 'oauth2:getProvider:'.$this->providerKey;
+        $this->provider = Gdn::cache()->get($cacheKey);
         if (!$this->provider) {
             $this->provider = Gdn_AuthenticationProviderModel::getProviderByKey($this->providerKey);
+            Gdn::cache()->store($cacheKey, $this->provider);
         }
 
         return $this->provider;
@@ -368,6 +375,8 @@ class Gdn_OAuth2 extends Gdn_Plugin {
                 $form->setFormValue('BaseUrl', $baseUrl);
                 $form->setFormValue('SignInUrl', $baseUrl); // kludge for default provider
             }
+            $cacheKey = 'oauth2:getProvider:'.$this->getProviderKey();
+            Gdn::cache()->remove($cacheKey);
             if ($form->save()) {
                 $sender->informMessage(t('Saved'));
             }
