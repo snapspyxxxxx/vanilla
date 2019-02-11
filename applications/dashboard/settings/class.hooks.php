@@ -344,13 +344,13 @@ class DashboardHooks extends Gdn_Plugin {
      */
     public function settingsController_render_before($sender) {
         // Set this in your config to dismiss our upgrade warnings. Not recommended.
-        if (c('Vanilla.WarnedMeToUpgrade') === 'PHP 7.0') {
+        if (c('Vanilla.WarnedMeToUpgrade') === 'PHP 7.1') {
             return;
         }
 
         $phpVersion = phpversion();
-        if (version_compare($phpVersion, '7.1') < 0) {
-            $upgradeMessage = ['Content' => 'We recommend using at least PHP 7.1. Support for PHP '.htmlspecialchars($phpVersion).' may be dropped in upcoming releases.', 'AssetTarget' => 'Content', 'CssClass' => 'WarningMessage'];
+        if (version_compare($phpVersion, '7.2') < 0) {
+            $upgradeMessage = ['Content' => 'We recommend using at least PHP 7.2. Support for PHP '.htmlspecialchars($phpVersion).' may be dropped in upcoming releases.', 'AssetTarget' => 'Content', 'CssClass' => 'WarningMessage'];
             $messageModule = new MessageModule($sender, $upgradeMessage);
             $sender->addModule($messageModule);
         }

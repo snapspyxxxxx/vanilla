@@ -23,11 +23,11 @@
     ],
     "config": {
         "platform": {
-            "php": "7.0.26"
+            "php": "7.1.0"
         }
     },
     "require": {
-        "php": ">=7.0.0",
+        "php": ">=7.1.0",
         "ext-json": "*",
         "container-interop/container-interop": "^1.1",
         "chrisjean/php-ico": "~1.0",
@@ -73,8 +73,8 @@
             "library/core/functions.deprecated.php"
         ],
         "psr-4": {
-			"Vanilla\\": "library/Vanilla",
-			"Garden\\": "library/Garden"
+            "Vanilla\\": "library/Vanilla",
+            "Garden\\": "library/Garden"
         }
     },
     "scripts": {
