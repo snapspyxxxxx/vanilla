@@ -16,7 +16,7 @@ class ActivityController extends Gdn_Controller {
     /**  @var array Models to include. */
     public $Uses = ['Database', 'Form', 'ActivityModel'];
 
-    /** @var ActivityModel */
+    /** @var ActivityModel for reals */
     public $ActivityModel;
 
     /**
