@@ -19,7 +19,7 @@ interface IProps {
 export default class FlexSpacer extends React.Component<IProps> {
     public render() {
         const content = ` `;
-        const Tag = `${this.props.tag ? this.props.tag : "div"}`;
+        const Tag = this.props.tag ? (this.props.tag as "div") : "div";
         return (
             <Tag className={classNames("u-flexSpacer", this.props.className)} aria-hidden={true} tabIndex={-1}>
                 {content}

@@ -17,7 +17,7 @@ interface IProps {
 export default class ConditionalWrap extends React.Component<IProps> {
     public render() {
         const { condition, className, tag, children } = this.props;
-        const Tag = `${tag || "div"}`;
+        const Tag = (tag as "div") || "div";
         if (condition) {
             return <Tag className={className}>{children}</Tag>;
         } else {

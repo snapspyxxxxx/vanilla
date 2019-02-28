@@ -6,7 +6,7 @@
 
 import * as React from "react";
 import classNames from "classnames";
-import { flyoutPosition } from "@rich-editor/components/popovers/pieces/flyoutPosition";
+import { calculateFlyoutPosition } from "@library/utils/flyoutUtils";
 
 export interface IProps {
     id: string;
@@ -38,7 +38,11 @@ export default class DropDownContents extends React.Component<IProps> {
                         },
                         this.props.className,
                     )}
-                    style={flyoutPosition(this.props.renderAbove, this.props.renderLeft, !!this.props.legacyMode)}
+                    style={calculateFlyoutPosition(
+                        this.props.renderAbove,
+                        this.props.renderLeft,
+                        !!this.props.legacyMode,
+                    )}
                     onClick={this.props.onClick}
                 >
                     {this.props.children}

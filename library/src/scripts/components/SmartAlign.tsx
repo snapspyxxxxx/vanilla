@@ -16,8 +16,8 @@ interface IProps {
 
 export default class SmartAlign extends React.Component<IProps> {
     public render() {
-        const Outer = this.props.outerTag ? `${this.props.outerTag}` : "div";
-        const Inner = this.props.outerTag ? `${this.props.innerTag}` : "div";
+        const Outer = this.props.outerTag ? (`${this.props.outerTag}` as "div") : "div";
+        const Inner = this.props.outerTag ? (`${this.props.innerTag}` as "div") : "div";
         const classes = smartAlignClasses();
         return (
             <Outer className={classNames("smartAlign-outer", this.props.className, classes.root)}>

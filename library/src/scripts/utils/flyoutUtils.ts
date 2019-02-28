@@ -10,7 +10,7 @@
  * @param renderLeft - Render flyout towards left
  * @ignore ignore - Do nothing - for legacy
  */
-export function flyoutPosition(renderAbove: boolean, renderLeft: boolean, ignore: boolean = false): any {
+export function calculateFlyoutPosition(renderAbove: boolean, renderLeft: boolean, ignore: boolean = false): any {
     if (!ignore) {
         const top = !renderAbove ? "100%" : undefined;
         const bottom = renderAbove ? "100%" : undefined;

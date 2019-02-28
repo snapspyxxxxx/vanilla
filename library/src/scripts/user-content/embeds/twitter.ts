@@ -6,7 +6,7 @@
 import { ensureScript } from "@library/dom";
 import { onContent } from "@library/application";
 import { IEmbedData, IEmbedElements, registerEmbedRenderer } from "@library/embeds";
-import { IScrapeData } from "@dashboard/@types/api";
+import { IScrapeData } from "@library/@types/api";
 
 export function initTwitterEmbeds() {
     registerEmbedRenderer("twitter", renderTweet);

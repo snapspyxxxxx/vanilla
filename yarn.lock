@@ -1795,7 +1795,7 @@
     "@babel/preset-typescript" "^7.1.0"
     "@babel/runtime" "^7.1.2"
 
-"@vanillaforums/prettier-config@1.0.0", "@vanillaforums/prettier-config@^1.0.0":
+"@vanillaforums/prettier-config@1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@vanillaforums/prettier-config/-/prettier-config-1.0.0.tgz#e08bae366a888ac130d90a9f9d0eeaf48f0f0f1d"
   integrity sha512-av01ftyfh5eQIH4Iuj0zFNLSiY+RggK6G68RDYE+H178TNpx2C5ZrI4agJzAWNZN0bwXEsaYEIVDvPNPHcJQyw==
@@ -9088,7 +9088,7 @@ prettier@1.14.3:
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.14.3.tgz#90238dd4c0684b7edce5f83b0fb7328e48bd0895"
   integrity sha512-qZDVnCrnpsRJJq5nSsiHCE3BYMED2OtsI+cmzIzF1QIfqm5ALf8tEJcO27zV1gKNKRPdhjO0dNWnrzssDQ1tFg==
 
-prettier@^1.15.3:
+prettier@1.16.4:
   version "1.16.4"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.16.4.tgz#73e37e73e018ad2db9c76742e2647e21790c9717"
   integrity sha512-ZzWuos7TI5CKUeQAtFd6Zhm2s6EpAD/ZLApIhsF9pRvRtM1RFo61dM/4MSRUA0SuLugA/zgrZD8m0BaY46Og7g==

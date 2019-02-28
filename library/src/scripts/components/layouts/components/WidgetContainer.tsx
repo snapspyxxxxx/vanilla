@@ -30,7 +30,7 @@ export default class WidgetContainer extends React.Component<IContainer> {
 
     public render() {
         if (this.props.children) {
-            const Tag = `${this.props.tag}`;
+            const Tag = `${this.props.tag}` as "div";
             return (
                 <Tag
                     className={className("widgetContainer", this.props.className, {

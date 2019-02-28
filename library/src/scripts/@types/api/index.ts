@@ -7,3 +7,6 @@ export * from "./conversations";
 export * from "./core";
 export * from "./notifications";
 export * from "./users";
+export * from "./comment";
+export * from "./discussion";
+export * from "./media";

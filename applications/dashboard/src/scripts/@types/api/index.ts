@@ -4,6 +4,3 @@
  */
 
 export * from "@dashboard/@types/api/authenticate";
-export * from "@dashboard/@types/api/comment";
-export * from "@dashboard/@types/api/discussion";
-export * from "@dashboard/@types/api/media";
