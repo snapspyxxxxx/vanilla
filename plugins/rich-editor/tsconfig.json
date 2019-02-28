@@ -1,0 +1,12 @@
+{
+    "extends": "../../library/tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@library/*": [
+                "../../library/src/scripts/*",
+            ],
+            "@rich-editor/*": ["./src/scripts/*"],
+        }
+    }
+}

@@ -1,7 +1,9 @@
 {
-    "name": "dashboard3",
+    "name": "@vanillaforums/dashboard",
+    "version": "2.8.0",
     "private": true,
     "devDependencies": {
+        "@vanillforums/library": "^2.8.0",
         "bower": "*",
         "grunt": "1.0.x",
         "grunt-autoprefixer": "3.0.x",
