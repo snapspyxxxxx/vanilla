@@ -14,8 +14,9 @@ export const VANILLA_PLUGINS = resolve(VANILLA_ROOT, "plugins");
 export const VANILLA_APPS = resolve(VANILLA_ROOT, "applications");
 export const VANILLA_THEMES = resolve(VANILLA_ROOT, "themes");
 
+export const BUILD_MODULES = resolve(VANILLA_ROOT, "build/node_modules");
 export const DIST_DIRECTORY = resolve(VANILLA_ROOT, "dist");
-export const LIBRARY_SRC_DIRECTORY = resolve(VANILLA_ROOT, "library/src/scripts");
+export const LIBRARY_SRC_DIRECTORY = resolve(VANILLA_ROOT, "node_modules/@vanillaforums/library/src/scripts");
 
 // Config files
 export const PRETTIER_FILE = resolve(VANILLA_ROOT, "prettier.config.js");
