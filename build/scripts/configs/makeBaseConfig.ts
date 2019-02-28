@@ -6,7 +6,7 @@
 
 import * as path from "path";
 import webpack from "webpack";
-import { VANILLA_ROOT, PRETTIER_FILE } from "../env";
+import { VANILLA_ROOT, PRETTIER_FILE, BUILD_MODULES } from "../env";
 import PrettierPlugin from "prettier-webpack-plugin";
 import { getOptions, BuildMode } from "../options";
 import chalk from "chalk";
@@ -26,6 +26,7 @@ export async function makeBaseConfig(entryModel: EntryModel, section: string) {
     const modulePaths = [
         "node_modules",
         path.join(VANILLA_ROOT, "node_modules"),
+        BUILD_MODULES,
         ...entryModel.addonDirs.map(dir => path.resolve(dir, "node_modules")),
     ];
 
@@ -137,7 +138,7 @@ ${chalk.green(aliases)}`;
          * We are expecting thirs tool to be used in a different directory than itself.
          */
         resolveLoader: {
-            modules: [path.join(VANILLA_ROOT, "node_modules")],
+            modules: modulePaths,
         },
     };
 
