@@ -1,5 +1,9 @@
 {
+    "name": "@vanillaforums/rich-editor",
+    "private": true,
+    "version": "2.8.0",
     "dependencies": {
+        "@vanillaforums/library": "^2.8.0",
         "quill": "^1.3.6"
     }
 }
