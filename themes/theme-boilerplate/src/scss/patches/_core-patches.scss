@@ -57,6 +57,15 @@ body {
     }
 }
 
+a.TextColor {
+    color: $link-default_color;
+    
+    &:focus,
+    &:hover {
+        color: $link-default-hover_color;
+    }
+}
+
 .Item {
 
     .BlockTitle {
