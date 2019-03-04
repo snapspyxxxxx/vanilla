@@ -103,7 +103,13 @@ $mebox-button_borderRadius:             3px !default;
     .MeButton-user .ProfilePhoto {
         width: $mebox-photo_size;
         height: $mebox-photo_size;
-        border-radius: $mebox-photo_size;
+        overflow: hidden;
+
+        @if ($theme-photo_round) {
+            border-radius: $mebox-photo_size;
+        } @else {
+            border-radius: $theme-photo_borderRadius;
+        }
     }
 
     .Flyout {
