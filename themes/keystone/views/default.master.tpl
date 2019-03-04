@@ -134,6 +134,9 @@
                     <div class="Herobanner">
                         {if $heroImageUrl}
                             <div class="Herobanner-bgImage" style="background-image:url('{$heroImageUrl}')"></div>
+                        {else}
+                            <div class="Herobanner-fallbackColor"></div>
+                            <div class="Herobanner-fallbackImage"></div>
                         {/if}
                         <div class="Container">
                             {if $ThemeOptions.Options.hasFeatureSearchbox}
