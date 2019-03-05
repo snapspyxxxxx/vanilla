@@ -5,7 +5,7 @@
  */
 
 import { globalVariables } from "@library/styles/globalStyleVars";
-import { componentThemeVariables, styleFactory } from "@library/styles/styleHelpers";
+import { componentThemeVariables, styleFactory, toStringColor } from "@library/styles/styleHelpers";
 import { color } from "csx/lib/color";
 import { px } from "csx";
 import { layoutVariables } from "@library/styles/layoutStyles";
@@ -98,8 +98,7 @@ export function formErrorClasses(theme?: object) {
     const vars = formElementsVariables(theme);
 
     const root = style({
-        backgroundColor: varsGlobal.feedbackColors.error.bg.toString(),
-        color: varsGlobal.feedbackColors.error.fg.toString(),
+        color: toStringColor(varsGlobal.feedbackColors.error),
         marginBottom: px(16),
         paddingLeft: vars.errorSpacing.horizontalPadding,
         paddingRight: vars.errorSpacing.horizontalPadding,

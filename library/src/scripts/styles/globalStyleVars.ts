@@ -42,18 +42,13 @@ export const globalVariables = (theme?: object) => {
         return mainColors.primary.mix(mainColors.bg, weight) as ColorHelper;
     };
 
-    const errorFg = color("#555A62");
     const warning = color("#ffce00");
-    const deleted = color("#D0021B");
+    const error = color("#D0021B");
     const feedbackColors = {
         warning,
-        error: {
-            fg: errorFg,
-            bg: color("#FFF3D4"),
-        },
         confirm: color("#60bd68"),
         unresolved: warning.mix(mainColors.fg, 10),
-        deleted,
+        error,
         ...themeVars.subComponentStyles("feedbackColors"),
     };
 
@@ -199,7 +194,7 @@ export const globalVariables = (theme?: object) => {
         },
         colors: {
             fg: mixBgAndFg(0.85),
-            deleted: feedbackColors.deleted,
+            deleted: feedbackColors.error,
         },
     };
 

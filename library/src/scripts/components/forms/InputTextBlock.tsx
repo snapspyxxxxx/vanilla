@@ -9,11 +9,7 @@ import classNames from "classnames";
 import { getRequiredID } from "@library/componentIDs";
 import InputBlock, { IInputBlockProps } from "@library/components/forms/InputBlock";
 import { Omit } from "@library/@types/utils";
-
-export enum InputTextBlockBaseClass {
-    STANDARD = "inputBlock",
-    CUSTOM = "",
-}
+import { inputBlockClasses } from "@library/styles/inputBlockStyles";
 
 export interface IInputTextProps extends Omit<IInputBlockProps, "children"> {
     inputProps: {
@@ -48,9 +44,16 @@ export default class InputTextBlock extends React.Component<IInputTextProps> {
 
     public render() {
         const { inputProps, ...blockProps } = this.props;
-        const inputClasses = classNames("inputBlock-inputText", "inputText", inputProps.inputClassNames, {
-            InputBox: this.props.legacyMode,
-        });
+        const classesInputBlock = inputBlockClasses();
+        const inputClasses = classNames(
+            classesInputBlock.inputT,
+            "inputBlock-inputText",
+            "inputText",
+            inputProps.inputClassNames,
+            {
+                InputBox: this.props.legacyMode,
+            },
+        );
 
         return (
             <InputBlock {...blockProps}>

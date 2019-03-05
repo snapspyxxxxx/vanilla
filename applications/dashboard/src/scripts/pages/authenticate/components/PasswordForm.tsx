@@ -17,6 +17,8 @@ import { IAuthenticatePasswordParams } from "@dashboard/@types/api";
 import { connect } from "react-redux";
 import { LoadStatus } from "@library/@types/api";
 import { postAuthenticatePassword } from "@dashboard/pages/authenticate/passwordActions";
+import { inputBlockClasses } from "@library/styles/inputBlockStyles";
+import classNames from "classnames";
 
 interface IProps {
     passwordState: IPasswordState;
@@ -55,6 +57,7 @@ export class PasswordForm extends React.Component<IProps, IState> {
         if (globalErrorMessage) {
             formDescribedBy = this.formDescriptionID;
         }
+        const classes = inputBlockClasses();
 
         return (
             <form
@@ -95,7 +98,7 @@ export class PasswordForm extends React.Component<IProps, IState> {
                         value: this.state.password,
                     }}
                 />
-                <div className="inputBlock inputBlock-tighter">
+                <div className={classNames("inputBlock", "inputBlock-tighter", classes.root)}>
                     <div className="rememberMeAndForgot">
                         <span className="rememberMeAndForgot-rememberMe">
                             <Checkbox

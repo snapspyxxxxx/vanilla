@@ -19,6 +19,9 @@ import {
     JustifyContentProperty,
     ContentProperty,
     ObjectFitProperty,
+    FontSizeProperty,
+    FontWeightProperty,
+    LineHeightProperty,
 } from "csstype";
 import { globalVariables } from "@library/styles/globalStyleVars";
 import { style, keyframes } from "typestyle";
@@ -287,10 +290,10 @@ interface IPaddings {
 
 export const paddings = (styles: IPaddings) => {
     return {
-        paddingTop: unit(styles.top),
-        paddingRight: unit(styles.right),
-        paddingBottom: unit(styles.bottom),
-        paddingLeft: unit(styles.left),
+        top: styles.top ? unit(styles.top) : undefined,
+        right: styles.right ? unit(styles.right) : undefined,
+        bottom: styles.bottom ? unit(styles.bottom) : undefined,
+        left: styles.left ? unit(styles.left) : undefined,
     };
 };
 
@@ -517,5 +520,21 @@ export const setAllLinkColors = (overwrites?: ILinkStates) => {
             "&:active": styles.active,
             "&:visited": styles.visited,
         },
+    };
+};
+
+interface IFont {
+    size?: FontSizeProperty<TLength>;
+    weight?: FontWeightProperty;
+    color?: ColorHelper | "transparent";
+    lineHeight?: LineHeightProperty<TLength>;
+}
+
+export const font = (props: IFont) => {
+    return {
+        size: props.size ? unit(props.size) : undefined,
+        weight: props.weight ? props.weight : undefined,
+        color: props.color ? toStringColor(props.color) : undefined,
+        lineHeight: props.lineHeight ? unit(props.lineHeight) : undefined,
     };
 };

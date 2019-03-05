@@ -10,11 +10,7 @@ import Paragraph from "../Paragraph";
 import { getRequiredID, IOptionalComponentID } from "@library/componentIDs";
 import { IFieldError } from "@library/@types/api/core";
 import ErrorMessages from "./ErrorMessages";
-
-export enum InputTextBlockBaseClass {
-    STANDARD = "inputBlock",
-    CUSTOM = "",
-}
+import { inputBlockClasses } from "@library/styles/inputBlockStyles";
 
 interface ICallbackProps {
     labelID: string;
@@ -33,7 +29,6 @@ export interface IInputBlockProps extends IOptionalComponentID {
     labelID?: string;
     descriptionID?: string;
     errors?: IFieldError[];
-    baseClass?: InputTextBlockBaseClass;
     legacyMode?: boolean;
 }
 
@@ -44,7 +39,6 @@ interface IState {
 export default class InputBlock extends React.Component<IInputBlockProps, IState> {
     public static defaultProps = {
         errors: [],
-        baseClass: InputTextBlockBaseClass.STANDARD,
     };
 
     public constructor(props: IInputBlockProps) {
@@ -55,7 +49,7 @@ export default class InputBlock extends React.Component<IInputBlockProps, IState
     }
 
     public render() {
-        const componentClasses = classNames(this.props.baseClass, this.props.className);
+        const classes = inputBlockClasses();
         const hasErrors = !!this.props.errors && this.props.errors.length > 0;
 
         let children;
@@ -66,17 +60,31 @@ export default class InputBlock extends React.Component<IInputBlockProps, IState
         }
 
         return (
-            <label className={componentClasses}>
-                <span id={this.labelID} className="inputBlock-labelAndDescription">
-                    <span className={classNames("inputBlock-labelText", this.props.labelClassName)}>
+            <label className={classNames("inputBlock", classes.root, this.props.className)}>
+                <span
+                    id={this.labelID}
+                    className={classNames(classes.labelAndDescription, "inputBlock-labelAndDescription")}
+                >
+                    <span className={classNames("inputBlock-labelText", classes.labelText, this.props.labelClassName)}>
                         {this.props.label}
                     </span>
-                    <Paragraph className="inputBlock-labelNote" children={this.props.labelNote} />
+                    <Paragraph
+                        className={classNames("inputBlock-labelNote", classes.labelNote)}
+                        children={this.props.labelNote}
+                    />
                 </span>
 
-                <span className="inputBlock-inputWrap">{children}</span>
-                <Paragraph className="inputBlock-labelNote" children={this.props.noteAfterInput} />
-                <ErrorMessages id={this.errorID} errors={this.props.errors} />
+                <span className={classNames("inputBlock-inputWrap", classes.inputWrap)}>{children}</span>
+                <Paragraph
+                    className={classNames("inputBlock-labelNote", classes.labelNote)}
+                    children={this.props.noteAfterInput}
+                />
+                <ErrorMessages
+                    id={this.errorID}
+                    errors={this.props.errors}
+                    className={classes.errors}
+                    errorClassName={classes.error}
+                />
             </label>
         );
     }

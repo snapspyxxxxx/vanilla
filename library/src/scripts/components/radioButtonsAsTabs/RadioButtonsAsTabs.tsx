@@ -8,6 +8,7 @@ import React from "react";
 import { uniqueIDFromPrefix } from "@library/componentIDs";
 import classNames from "classnames";
 import TabContext from "@library/contexts/TabContext";
+import { inputBlockClasses } from "@library/styles/inputBlockStyles";
 
 interface IProps {
     prefix: string;
@@ -31,6 +32,7 @@ export default class RadioButtonsAsTabs extends React.Component<IProps> {
     }
 
     public render() {
+        const classesInputBlock = inputBlockClasses();
         return (
             <TabContext.Provider
                 value={{
@@ -42,7 +44,10 @@ export default class RadioButtonsAsTabs extends React.Component<IProps> {
             >
                 <fieldset
                     className={classNames(
-                        "inputBlock radioButtonsAsTabs _searchBarAdvanced-searchIn",
+                        classesInputBlock.root,
+                        "inputBlock",
+                        "radioButtonsAsTabs",
+                        "_searchBarAdvanced-searchIn",
                         this.props.className,
                     )}
                 >

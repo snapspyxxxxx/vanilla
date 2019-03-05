@@ -13,6 +13,7 @@ import Paragraph from "@library/components/Paragraph";
 import * as selectOverrides from "./overwrites";
 import { IComboBoxOption } from "./SearchBar";
 import { tokensClasses } from "@library/styles/tokensStyles";
+import { inputBlockClasses } from "@library/styles/inputBlockStyles";
 
 interface IProps extends IOptionalComponentID {
     label: string;
@@ -45,15 +46,32 @@ export default class Tokens extends React.Component<IProps, IState> {
     public render() {
         const { className, disabled, options, isLoading } = this.props;
         const classes = tokensClasses();
+        const classesInputBlock = inputBlockClasses();
 
         return (
-            <div className={classNames("tokens", "inputBlock", this.props.className, classes.root)}>
-                <label htmlFor={this.inputID} className="inputBlock-labelAndDescription">
-                    <span className="inputBlock-labelText">{this.props.label}</span>
-                    <Paragraph className="inputBlock-labelNote" children={this.props.labelNote} />
+            <div
+                className={classNames(
+                    "tokens",
+                    "inputBlock",
+                    this.props.className,
+                    classes.root,
+                    classesInputBlock.root,
+                )}
+            >
+                <label
+                    htmlFor={this.inputID}
+                    className={classNames("inputBlock-labelAndDescription", classesInputBlock.labelAndDescription)}
+                >
+                    <span className={classNames("inputBlock-labelText", classesInputBlock.labelText)}>
+                        {this.props.label}
+                    </span>
+                    <Paragraph
+                        className={classNames("inputBlock-labelNote", classesInputBlock.labelNote)}
+                        children={this.props.labelNote}
+                    />
                 </label>
 
-                <div className="inputBlock-inputWrap">
+                <div className={classNames("inputBlock-inputWrap", classesInputBlock.inputWrap)}>
                     <Select
                         id={this.id}
                         inputId={this.inputID}

@@ -13,6 +13,7 @@ import { IFieldError } from "@library/@types/api";
 import ErrorMessages from "@library/components/forms/ErrorMessages";
 import * as selectOverrides from "./overwrites";
 import { IComboBoxOption } from "./SearchBar";
+import { inputBlockClasses } from "@library/styles/inputBlockStyles";
 
 interface IProps extends IOptionalComponentID {
     label: string;
@@ -50,15 +51,24 @@ export default class SelectOne extends React.Component<IProps> {
         if (hasErrors) {
             describedBy = this.errorID;
         }
+        const classesInputBlock = inputBlockClasses();
 
         return (
             <div className={this.props.className}>
-                <label htmlFor={this.inputID} className="inputBlock-labelAndDescription">
-                    <span className={classNames("inputBlock-labelText", this.props.label)}>{this.props.label}</span>
-                    <Paragraph className="inputBlock-labelNote" children={this.props.labelNote} />
+                <label
+                    htmlFor={this.inputID}
+                    className={classNames("inputBlock-labelAndDescription", classesInputBlock.labelAndDescription)}
+                >
+                    <span className={classNames("inputBlock-labelText", this.props.label, classesInputBlock.labelText)}>
+                        {this.props.label}
+                    </span>
+                    <Paragraph
+                        className={classNames("inputBlock-labelNote", classesInputBlock.labelNote)}
+                        children={this.props.labelNote}
+                    />
                 </label>
 
-                <div className="inputBlock-inputWrap">
+                <div className={classNames("inputBlock-inputWrap", classesInputBlock.inputWrap)}>
                     <Select
                         id={this.id}
                         options={options}
@@ -76,8 +86,16 @@ export default class SelectOne extends React.Component<IProps> {
                         aria-describedby={describedBy}
                         isSearchable={searchable}
                     />
-                    <Paragraph className="inputBlock-labelNote" children={this.props.noteAfterInput} />
-                    <ErrorMessages id={this.errorID} errors={this.props.errors} />
+                    <Paragraph
+                        className={classNames("inputBlock-labelNote", classesInputBlock.labelNote)}
+                        children={this.props.noteAfterInput}
+                    />
+                    <ErrorMessages
+                        id={this.errorID}
+                        errors={this.props.errors}
+                        className={classesInputBlock.errors}
+                        errorClassName={classesInputBlock.error}
+                    />
                 </div>
             </div>
         );
