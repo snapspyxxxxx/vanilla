@@ -30,7 +30,6 @@ export default class InputTextBlock extends React.Component<IInputTextProps> {
         disabled: false,
         type: "text",
         errors: [],
-        baseClass: InputTextBlockBaseClass.STANDARD,
         legacyMode: false,
     };
 
@@ -45,15 +44,9 @@ export default class InputTextBlock extends React.Component<IInputTextProps> {
     public render() {
         const { inputProps, ...blockProps } = this.props;
         const classesInputBlock = inputBlockClasses();
-        const inputClasses = classNames(
-            classesInputBlock.inputT,
-            "inputBlock-inputText",
-            "inputText",
-            inputProps.inputClassNames,
-            {
-                InputBox: this.props.legacyMode,
-            },
-        );
+        const inputClasses = classNames("inputBlock-inputText", "inputText", inputProps.inputClassNames, {
+            InputBox: this.props.legacyMode,
+        });
 
         return (
             <InputBlock {...blockProps}>
@@ -95,7 +88,7 @@ export default class InputTextBlock extends React.Component<IInputTextProps> {
     /**
      * Use a native change event instead of React's because of https://github.com/facebook/react/issues/1159
      */
-    public componentWillUnount() {
+    public componentWillUnmount() {
         this.inputRef.current!.removeEventListener("change", this.onChange);
     }
 
