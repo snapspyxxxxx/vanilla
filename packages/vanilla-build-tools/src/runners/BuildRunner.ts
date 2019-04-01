@@ -7,15 +7,15 @@
 import path from "path";
 import * as del from "del";
 import webpack, { Stats, Configuration } from "webpack";
-import { makeProdConfig } from "./configs/makeProdConfig";
-import { makeDevConfig } from "./configs/makeDevConfig";
-import { getOptions, BuildMode, IBuildOptions } from "./options";
+import { makeProdConfig } from "../configs/makeProdConfig";
+import { makeDevConfig } from "../configs/makeDevConfig";
+import { getOptions, BuildMode, IBuildOptions } from "../options";
 import chalk from "chalk";
-import { installNodeModulesInDir } from "./utility/moduleUtils";
-import { makePolyfillConfig } from "./configs/makePolyfillConfig";
-import { print, fail } from "./utility/utils";
-import { DIST_DIRECTORY, VANILLA_APPS } from "./env";
-import EntryModel from "./utility/EntryModel";
+import { installNodeModulesInDir } from "../utility/moduleUtils";
+import { makePolyfillConfig } from "../configs/makePolyfillConfig";
+import { print, fail } from "../utility/utils";
+import { DIST_DIRECTORY, VANILLA_APPS } from "../env";
+import EntryModel from "../utility/EntryModel";
 import WebpackDevServer, { Configuration as DevServerConfiguration } from "webpack-dev-server";
 
 /**
@@ -27,7 +27,7 @@ import WebpackDevServer, { Configuration as DevServerConfiguration } from "webpa
  * - A production build that spawns a bundle size analyzer (BuildMode.ANALYZE)
  * - A production build that only builds polyfills. (BuildMode.POLYFILLS)
  */
-export default class Builder {
+export class BuildRunner {
     private statOptions: any = this.options.verbose ? "normal" : "minimal";
 
     private entryModel: EntryModel;

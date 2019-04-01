@@ -9,7 +9,7 @@
 import { resolve } from "path";
 
 // Application paths
-export const VANILLA_ROOT = resolve(__dirname, "../../");
+export const VANILLA_ROOT = resolve(__dirname, "../");
 export const VANILLA_PLUGINS = resolve(VANILLA_ROOT, "plugins");
 export const VANILLA_APPS = resolve(VANILLA_ROOT, "applications");
 export const VANILLA_THEMES = resolve(VANILLA_ROOT, "themes");

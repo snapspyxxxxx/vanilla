@@ -8,7 +8,7 @@ import path from "path";
 import { Configuration } from "webpack";
 import { makeBaseConfig } from "./makeBaseConfig";
 import EntryModel from "../utility/EntryModel";
-import { getOptions } from "../options";
+import { getOptions } from "../getOptions";
 
 /**
  * Create the development config. Eg. Hot build.

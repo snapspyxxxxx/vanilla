@@ -4,14 +4,15 @@
  * @license GPL-2.0-only
  */
 
-import { getOptions } from "./options";
-import Builder from "./Builder";
+import { getOptions } from "../getOptions";
+import { BuildRunner } from "../runners/BuildRunner";
 
 /**
  * Run the build. Options are passed as arguments from the command line.
  * @see https://docs.vanillaforums.com/developer/tools/building-frontend/
  */
-void getOptions().then(options => {
-    const builder = new Builder(options);
-    return builder.build();
-});
+export async function runBuild() {
+    const options = await getOptions();
+    const builder = new BuildRunner(options);
+    await builder.build();
+}

@@ -17,5 +17,5 @@
             "react-docgen-typescript-webpack-plugin": ["scripts/@types/react-docgen-typescript-webpack-plugin"]
         }
     },
-    "include": ["scripts/**/*.ts"],
+    "include": ["src/**/*.ts"]
 }

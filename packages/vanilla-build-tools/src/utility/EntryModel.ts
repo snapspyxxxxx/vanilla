@@ -14,7 +14,7 @@ import {
     BOOTSTRAP_SOURCE_FILE,
     LIBRARY_SRC_DIRECTORY,
 } from "../env";
-import { BuildMode, IBuildOptions } from "../options";
+import { BuildMode, IBuildOptions } from "../getOptions";
 const readDir = promisify(fs.readdir);
 const fileExists = promisify(fs.exists);
 

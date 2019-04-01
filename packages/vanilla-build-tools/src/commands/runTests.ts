@@ -4,14 +4,15 @@
  * @license GPL-2.0-only
  */
 
-import { getOptions } from "./options";
-import { KarmaRunner } from "./KarmaRunner";
+import { getOptions } from "../getOptions";
+import { KarmaRunner } from "../runners/KarmaRunner";
 
 /**
  * Run the build. Options are passed as arguments from the command line.
  * @see https://docs.vanillaforums.com/developer/tools/building-frontend/
  */
-void getOptions().then(options => {
+export async function runTests() {
+    const options = await getOptions();
     const runner = new KarmaRunner(options);
-    return runner.run();
-});
+    await runner.run();
+}
