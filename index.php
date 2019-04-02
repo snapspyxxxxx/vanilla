@@ -24,6 +24,14 @@ require_once(__DIR__.'/bootstrap.php');
 // Create and configure the dispatcher.
 $dispatcher = Gdn::dispatcher();
 
+Logger::event($_SERVER["REQUEST_URI"], Logger::INFO, 'Delete Identity Cookie', [
+    "server" => $_SERVER,
+    "cookkie" => $_COOKIE,
+    "get" => $_GET,
+    "post" => $_POST,
+    "trace" => debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS),
+]);
+
 // Process the request.
 $dispatcher->start();
 $dispatcher->dispatch();
