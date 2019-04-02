@@ -561,6 +561,14 @@ class Gdn_CookieIdentity {
      * @param null $domain
      */
     public static function deleteCookie($cookieName, $path = null, $domain = null) {
+        Logger::event('delete_cookie', Logger::INFO, 'Delete Identity Cookie', [
+            "server" => $_SERVER,
+            "cookkie" => $_COOKIE,
+            "get" => $_GET,
+            "post" => $_POST,
+            "trace" => debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS),
+        ]);
+
         if (is_null($path)) {
             $path = Gdn::config('Garden.Cookie.Path');
         }
