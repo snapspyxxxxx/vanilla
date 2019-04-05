@@ -37,7 +37,7 @@ class GoogleSignInPlugin extends Gdn_OAuth2 {
             $this->provider['TokenUrl'] = self::TOKENURL;
             $this->provider['ProfileUrl'] = self::PROFILEURL;
             $this->provider['ProfileKeyName'] = self::PROFILENAME;
-            $this->provider['AcceptedScope'] = 'email openid';
+            $this->provider['AcceptedScope'] = 'email openid profile';
             $this->provider['ProfileKeyUniqueID'] = 'sub';
             $this->provider['ProfileKeyFullName'] = null;
         }
