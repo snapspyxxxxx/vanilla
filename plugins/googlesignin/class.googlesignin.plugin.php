@@ -120,7 +120,7 @@ class GoogleSignInPlugin extends Gdn_OAuth2 {
 
         $sender->setHighlightRoute();
         if (!$sender->data('Title')) {
-            $sender->setData('Title', sprintf(t('%s Settings'), 'Google Sign-In'));
+            $sender->setData('Title', sprintf(t('%s Settings'), 'Google Sign In'));
         }
 
         $view = ($this->settingsView) ? $this->settingsView : 'plugins/googlesignin';
