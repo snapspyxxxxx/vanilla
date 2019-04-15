@@ -96,7 +96,13 @@ class PageScraper {
         } elseif (!in_array(val('scheme', $urlParts), $this->validSchemes)) {
             throw new InvalidArgumentException('Unsupported URL scheme.');
         }
-
+        // We are only checking for IP addresses, resolving domain names will be done at a later stage.
+        $checkIP = filter_var($urlParts['host'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4|FILTER_FLAG_IPV6);
+        if ($checkIP) {
+            if ($this->checkIP($urlParts['host']) === false ) {
+                throw new InvalidArgumentException('Invalid Host.');
+            }
+        }
         $this->httpRequest->setMethod(HttpRequest::METHOD_GET);
         $this->httpRequest->setHeader('User-Agent', $this->userAgent());
         $this->httpRequest->setUrl($url);
@@ -104,6 +110,26 @@ class PageScraper {
         return $result;
     }
 
+    /* Check if IP is private or public.
+     *
+     * @param string $ip IP address to check.
+     * @return bool false for private IP, true for public IP.
+     */
+    private function checkIP (string $ip) {
+        $filterIP = filter_var(
+            $ip,
+            FILTER_VALIDATE_IP,
+            FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
+        );
+
+        if ($filterIP) {
+            // IP is Public.
+            return true;
+        } else {
+            // IP is Private.
+            return false;
+        }
+    }
     /**
      * Parse the document to find a suitable description.
      *
