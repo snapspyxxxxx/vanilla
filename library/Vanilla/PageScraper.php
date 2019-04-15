@@ -110,10 +110,11 @@ class PageScraper {
         return $result;
     }
 
-    /** Check if IP is private or public.
+    /**
+     * Check if IP is private or public.
      *
      * @param string $ip IP address to check.
-     * @return bool false for private IP, true for public IP.
+     * @return bool
      */
     private function checkIP(string $ip) {
         $filterIP = filter_var(
