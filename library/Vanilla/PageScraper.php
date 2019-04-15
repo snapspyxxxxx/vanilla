@@ -99,7 +99,7 @@ class PageScraper {
         // We are only checking for IP addresses, domains will be done at a later stage.
         if (isset($urlParts['host'])) {
             $checkIP = filter_var($urlParts['host'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4|FILTER_FLAG_IPV6);
-            if ($checkIP && $this->checkIP($urlParts['host']) === false ) {
+            if ($checkIP && $this->checkIP($urlParts['host']) === false) {
                 throw new InvalidArgumentException('Invalid Host.');
             }
         }
@@ -110,7 +110,7 @@ class PageScraper {
         return $result;
     }
 
-    /* Check if IP is private or public.
+    /** Check if IP is private or public.
      *
      * @param string $ip IP address to check.
      * @return bool false for private IP, true for public IP.
