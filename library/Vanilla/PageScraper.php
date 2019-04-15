@@ -96,10 +96,10 @@ class PageScraper {
         } elseif (!in_array(val('scheme', $urlParts), $this->validSchemes)) {
             throw new InvalidArgumentException('Unsupported URL scheme.');
         }
-        // We are only checking for IP addresses, resolving domain names will be done at a later stage.
-        $checkIP = filter_var($urlParts['host'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4|FILTER_FLAG_IPV6);
-        if ($checkIP) {
-            if ($this->checkIP($urlParts['host']) === false ) {
+        // We are only checking for IP addresses, domains will be done at a later stage.
+        if (isset($urlParts['host'])) {
+            $checkIP = filter_var($urlParts['host'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4|FILTER_FLAG_IPV6);
+            if ($checkIP && $this->checkIP($urlParts['host']) === false ) {
                 throw new InvalidArgumentException('Invalid Host.');
             }
         }
