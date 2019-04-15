@@ -115,7 +115,7 @@ class PageScraper {
      * @param string $ip IP address to check.
      * @return bool false for private IP, true for public IP.
      */
-    private function checkIP (string $ip) {
+    private function checkIP(string $ip) {
         $filterIP = filter_var(
             $ip,
             FILTER_VALIDATE_IP,
