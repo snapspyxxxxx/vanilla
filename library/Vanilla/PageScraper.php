@@ -116,13 +116,13 @@ class PageScraper {
      * @param string $ip IP address to check.
      * @return bool
      */
-    private function checkIP(string $ip) {
+    private function checkIP(string $ip):bool {
         $filterIP = filter_var(
             $ip,
             FILTER_VALIDATE_IP,
-            FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
+            FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
         );
-        $result = !empty($filterIP) ? true : false;
+        $result = $filterIP ? true : false;
         return $result;
     }
     /**
