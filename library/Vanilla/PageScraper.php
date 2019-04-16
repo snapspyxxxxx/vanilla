@@ -122,14 +122,8 @@ class PageScraper {
             FILTER_VALIDATE_IP,
             FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
         );
-
-        if ($filterIP) {
-            // IP is Public.
-            return true;
-        } else {
-            // IP is Private.
-            return false;
-        }
+        $result = !empty($filterIP) ? true :false;
+        return $result;
     }
     /**
      * Parse the document to find a suitable description.
