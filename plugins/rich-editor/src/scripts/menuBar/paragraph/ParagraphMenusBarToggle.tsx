@@ -32,6 +32,7 @@ import Quill, { RangeStatic } from "quill/core";
 import React from "react";
 import { style } from "typestyle";
 import uniqueId from "lodash/uniqueId";
+import { IconForButtonWrap } from "@rich-editor/editor/pieces/IconForButtonWrap";
 
 export enum IMenuBarItemTypes {
     CHECK = "checkbox",
@@ -43,6 +44,7 @@ interface IProps extends IWithEditorProps {
     disabled?: boolean;
     mobile?: boolean;
     lastGoodSelection: RangeStatic;
+    renderAbove?: boolean;
 }
 
 interface IState {
@@ -130,8 +132,6 @@ export class ParagraphMenusBarToggle extends React.PureComponent<IProps, IState>
                 className={classNames(
                     { isMenuInset: !this.props.legacyMode },
                     !!this.props.mobile ? classes.paragraphMenuMobile : classes.paragraphMenu,
-                    !!this.props.mobile ? classes.menuItem : "",
-                    !!this.props.mobile ? classes.button : "",
                 )}
                 onKeyDown={this.handleMenuBarKeyDown}
                 ref={this.selfRef}
@@ -144,12 +144,15 @@ export class ParagraphMenusBarToggle extends React.PureComponent<IProps, IState>
                     aria-controls={this.menuID}
                     aria-expanded={this.isMenuVisible}
                     disabled={this.props.disabled}
-                    className={pilcrowClasses}
+                    className={classNames(pilcrowClasses, {
+                        [classes.button]: this.props.mobile,
+                        [classes.menuItem]: this.props.mobile,
+                    })}
                     aria-haspopup="menu"
                     onClick={this.pilcrowClickHandler}
                     onKeyDown={this.handleEscape}
                 >
-                    <ActiveFormatIcon activeFormats={menuActiveFormats} />
+                    <IconForButtonWrap icon={<ActiveFormatIcon activeFormats={menuActiveFormats} />} />
                 </button>
                 <div
                     id={this.menuID}
@@ -278,7 +281,7 @@ export class ParagraphMenusBarToggle extends React.PureComponent<IProps, IState>
             classes.position,
             classes.menuBar,
             classesDropDown.likeDropDownContent,
-            scrollBounds.height - bounds.bottom <= 170 ? "isUp" : "isDown",
+            this.props.renderAbove || scrollBounds.height - bounds.bottom <= 170 ? "isUp" : "isDown",
         );
     }
 

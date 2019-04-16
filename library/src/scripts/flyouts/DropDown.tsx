@@ -33,7 +33,8 @@ export interface IProps extends IDeviceProps {
     buttonBaseClass?: ButtonTypes;
     disabled?: boolean;
     toggleButtonClassName?: string;
-    setExternalButtonRef?: (ref: React.RefObject<HTMLButtonElement>) => void;
+    initialFocusElement?: HTMLElement | null;
+    buttonRef?: React.RefObject<HTMLButtonElement>;
     onVisibilityChange?: (isVisible: boolean) => void;
     openAsModal?: boolean;
     title?: string;
@@ -84,10 +85,11 @@ class DropDown extends React.Component<IProps, IState> {
                 buttonClassName={this.props.buttonClassName}
                 selectedItemLabel={this.selectedText}
                 disabled={this.props.disabled}
-                setExternalButtonRef={this.props.setExternalButtonRef}
+                buttonRef={this.props.buttonRef}
                 toggleButtonClassName={this.props.toggleButtonClassName}
                 onVisibilityChange={this.props.onVisibilityChange}
                 openAsModal={openAsModal}
+                initialFocusElement={this.props.initialFocusElement}
             >
                 {params => {
                     return (
@@ -104,10 +106,28 @@ class DropDown extends React.Component<IProps, IState> {
                         >
                             {title ? (
                                 <header className={classNames("frameHeader", classesFrameHeader.root)}>
-                                    <FlexSpacer
-                                        className={classNames("frameHeader-leftSpacer", classesFrameHeader.leftSpacer)}
-                                    />
-                                    <SmartAlign>
+                                    {openAsModal && (
+                                        <FlexSpacer
+                                            className={classNames(
+                                                "frameHeader-leftSpacer",
+                                                classesFrameHeader.leftSpacer,
+                                            )}
+                                        />
+                                    )}
+                                    {openAsModal && (
+                                        <SmartAlign>
+                                            <Heading
+                                                title={title}
+                                                className={classNames(
+                                                    "dropDown-title",
+                                                    classesDropDown.title,
+                                                    classes.title,
+                                                )}
+                                            />
+                                        </SmartAlign>
+                                    )}
+
+                                    {!openAsModal && (
                                         <Heading
                                             title={title}
                                             className={classNames(
@@ -116,20 +136,12 @@ class DropDown extends React.Component<IProps, IState> {
                                                 classes.title,
                                             )}
                                         />
-                                    </SmartAlign>
-                                    <div
-                                        className={classNames(
-                                            "frameHeader-closePosition",
-                                            classesFrameHeader.closePosition,
-                                            classesFrameHeader.action,
-                                        )}
-                                    >
-                                        <CloseButton
-                                            className="frameHeader-close"
-                                            onClick={params.closeMenuHandler}
-                                            baseClass={ButtonTypes.CUSTOM}
-                                        />
-                                    </div>
+                                    )}
+
+                                    <CloseButton
+                                        className={classesFrameHeader.action}
+                                        onClick={params.closeMenuHandler}
+                                    />
                                 </header>
                             ) : null}
                             <ul className={classNames("dropDownItems", classes.items)}>{this.props.children}</ul>

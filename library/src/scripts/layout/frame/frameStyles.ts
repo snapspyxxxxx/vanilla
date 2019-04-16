@@ -62,7 +62,8 @@ export const frameClasses = useThemeCache(() => {
         flexDirection: "column",
         position: "relative",
         backgroundColor: colorOut(vars.colors.bg),
-        maxHeight: viewHeight(100),
+        maxHeight: percent(100),
+        height: percent(100),
         borderRadius: unit(vars.border.radius),
     });
     return { root };
@@ -85,9 +86,9 @@ export const frameHeaderClasses = useThemeCache(() => {
         zIndex: 1,
         borderBottom: singleBorder(),
         ...paddings({
-            top: 0,
+            top: 4,
             right: vars.footer.spacing,
-            bottom: 0,
+            bottom: 4,
             left: vars.footer.spacing,
         }),
         $nest: {
@@ -110,13 +111,10 @@ export const frameHeaderClasses = useThemeCache(() => {
         display: "flex",
         alignItems: "center",
         flexGrow: 1,
+        margin: 0,
         textOverflow: "ellipsis",
         fontWeight: globalVars.fonts.weights.semiBold,
         fontSize: unit(globalVars.fonts.size.large),
-        ...paddings({
-            top: unit(4),
-            bottom: unit(4),
-        }),
     });
 
     const left = style("left", {
@@ -155,11 +153,7 @@ export const frameHeaderClasses = useThemeCache(() => {
         },
     });
 
-    const closePosition = style("closePosition", {
-        marginLeft: "auto",
-    });
-
-    return { root, backButton, heading, left, centred, leftSpacer, action, closePosition };
+    return { root, backButton, heading, left, centred, leftSpacer, action };
 });
 
 export const frameBodyClasses = useThemeCache(() => {
@@ -169,7 +163,6 @@ export const frameBodyClasses = useThemeCache(() => {
     const root = style({
         position: "relative",
         flexGrow: 1,
-        maxHeight: percent(100),
         overflow: "auto",
         ...paddings({
             left: vars.spacing.padding,
@@ -181,13 +174,6 @@ export const frameBodyClasses = useThemeCache(() => {
                     left: 0,
                     right: 0,
                 }),
-            },
-            "&.inheritHeight": {
-                $nest: {
-                    ".framePanel": {
-                        maxHeight: percent(100),
-                    },
-                },
             },
         },
     });
@@ -222,7 +208,6 @@ export const framePanelClasses = useThemeCache(() => {
         flexGrow: 1,
         height: percent(100),
         backgroundColor: colorOut(vars.colors.bg),
-        overflow: "auto",
         maxHeight: calc(`100vh - ${unit(vars.header.minHeight + vars.footer.minHeight + vars.spacing.padding * 2)}`),
 
         $nest: {

@@ -70,7 +70,7 @@ export const dropDownVariables = useThemeCache(() => {
     });
 
     const title = makeThemeVars("title", {
-        color: globalVars.mixBgAndFg(0.15),
+        color: globalVars.mainColors.fg,
     });
 
     const contents = makeThemeVars("contents", {
@@ -115,7 +115,7 @@ export const dropDownClasses = useThemeCache(() => {
         overflow: "hidden",
         ...shadowOrBorderBasedOnLightness(vars.contents.bg, borders({}), shadows.dropDown()),
         ...borders(vars.contents.border),
-        zIndex: 1,
+        zIndex: 3,
         $nest: {
             "&.isParentWidth": {
                 minWidth: "initial",
@@ -235,7 +235,7 @@ export const dropDownClasses = useThemeCache(() => {
                     outline: 0,
                 },
                 hover: {
-                    backgroundColor: colorOut(globalVars.states.active.color),
+                    backgroundColor: colorOut(globalVars.states.hover.color),
                 },
                 focus: {
                     backgroundColor: colorOut(globalVars.states.focus.color),
@@ -294,16 +294,15 @@ export const dropDownClasses = useThemeCache(() => {
     const title = style("title", {
         ...fonts({
             weight: globalVars.fonts.weights.semiBold as 400,
-            size: globalVars.fonts.size.small,
+            size: globalVars.fonts.size.medium,
             lineHeight: globalVars.lineHeights.condensed,
         }),
         ...paddings({
             top: 0,
             right: 0,
             bottom: 0,
-            left: unit(6),
         }),
-        textTransform: "uppercase",
+        flexGrow: 1,
         color: colorOut(vars.title.color),
     });
 

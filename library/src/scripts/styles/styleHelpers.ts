@@ -6,6 +6,7 @@
 import { formElementsVariables } from "@library/forms/formElementStyles";
 import { globalVariables } from "@library/styles/globalStyleVars";
 import { styleFactory } from "@library/styles/styleUtils";
+import { log } from "@library/utility/utils";
 import {
     AlignItemsProperty,
     AppearanceProperty,
@@ -60,7 +61,7 @@ const fontFallbacks = [
     "Segoe UI Symbol",
 ];
 
-export const colorOut = (colorValue: ColorValues, makeImportant = false) => {
+export const colorOut = (colorValue: ColorValues | string, makeImportant = false) => {
     if (!colorValue) {
         return undefined;
     } else {
@@ -406,10 +407,11 @@ export const allLinkStates = (styles: ILinkStates) => {
     return output;
 };
 
-export const allButtonStates = (styles: IButtonStates, nested?: object) => {
+export const allButtonStates = (styles: IButtonStates, nested?: object, debugMode?: boolean) => {
     const allStates = styles.allStates !== undefined ? styles.allStates : {};
     const noState = styles.noState !== undefined ? styles.noState : {};
-    return {
+
+    const output = {
         ...allStates,
         ...noState,
         $nest: {
@@ -421,6 +423,15 @@ export const allButtonStates = (styles: IButtonStates, nested?: object) => {
             ...nested,
         },
     };
+
+    if (debugMode) {
+        log("allButtonStates: ");
+        log("style: ", styles);
+        log("nested: ", nested);
+        log("output: ", output);
+    }
+
+    return output;
 };
 
 export const unit = (val: string | number | undefined, unitFunction = px) => {
@@ -462,10 +473,10 @@ export const margins = (styles: IMargins): NestedCSSProperties => {
     const marginVals = {} as NestedCSSProperties;
 
     if (styles.all !== undefined) {
-        marginVals.paddingTop = unit(styles.all);
-        marginVals.paddingRight = unit(styles.all);
-        marginVals.paddingBottom = unit(styles.all);
-        marginVals.paddingLeft = unit(styles.all);
+        marginVals.marginTop = unit(styles.all);
+        marginVals.marginRight = unit(styles.all);
+        marginVals.marginBottom = unit(styles.all);
+        marginVals.marginLeft = unit(styles.all);
     }
 
     if (styles.vertical !== undefined) {
@@ -694,11 +705,11 @@ export const dropShadow = (vals: IDropShadowShorthand | IDropShadow | "none" | "
     } else if ("nonColorProps" in vals) {
         return { dropShadow: `${vals.nonColorProps} ${vals.color.toString()}` };
     } else {
-        const { x, y, blur, spread, inset, shadowColor } = this.props;
+        const { x, y, blur, spread, inset, color } = vals;
         return {
             dropShadow: `${x ? x + " " : ""}${y ? y + " " : ""}${blur ? blur + " " : ""}${
                 spread ? spread + " " : ""
-            }${shadowColor}${inset ? " inset" : ""}`,
+            }${color}${inset ? " inset" : ""}`,
         };
     }
 };
@@ -957,7 +968,7 @@ export interface IActionStates {
  * Helper to write CSS state styles. Note this one is for buttons or links
  * *** You must use this inside of a "$nest" ***
  */
-export const buttonStates = (styles: IActionStates) => {
+export const buttonStates = (styles: IActionStates, nest?: object) => {
     const allStates = styles.allStates !== undefined ? styles.allStates : {};
     const hover = styles.hover !== undefined ? styles.hover : {};
     const focus = styles.focus !== undefined ? styles.focus : {};
@@ -973,6 +984,7 @@ export const buttonStates = (styles: IActionStates) => {
         "&:focus:not(.focus-visible)": { ...allStates, ...focusNotKeyboard },
         "&.focus-visible": { ...allStates, ...accessibleFocus },
         "&&:active": { ...allStates, ...active },
+        ...nest,
     };
 };
 

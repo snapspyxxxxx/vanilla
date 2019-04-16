@@ -13,13 +13,18 @@ export const bodyCSS = useThemeCache(() => {
     const globalVars = globalVariables();
     cssRule("html, body", {
         backgroundColor: colorOut(globalVars.body.backgroundImage.color),
-        color: colorOut(globalVars.mainColors.fg),
         ...fonts({
             size: globalVars.fonts.size.medium,
             family: globalVars.fonts.families.body,
+            color: globalVars.mainColors.fg,
         }),
         wordBreak: "break-word",
         overscrollBehavior: "none", // For IE -> https://developer.mozilla.org/en-US/docs/Web/CSS/overscroll-behavior
+    });
+
+    cssRule("*", {
+        // For Mobile Safari -> https://developer.mozilla.org/en-US/docs/Web/CSS/overscroll-behavior
+        "-webkit-overflow-scrolling": "touch",
     });
 
     cssRule("h1, h2, h3, h4, h5, h6", {
