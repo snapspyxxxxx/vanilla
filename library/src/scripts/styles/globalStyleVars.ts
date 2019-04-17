@@ -3,12 +3,7 @@
  * @license GPL-2.0-only
  */
 
-import {
-    modifyColorBasedOnLightness,
-    colorOut,
-    IBackground,
-    modifyColorSaturationBasedOnLightness,
-} from "@library/styles/styleHelpers";
+import { modifyColorBasedOnLightness, colorOut, IBackground, emphasizeLightness } from "@library/styles/styleHelpers";
 import { useThemeCache, variableFactory } from "@library/styles/styleUtils";
 import { color, ColorHelper, percent, viewHeight } from "csx";
 
@@ -39,7 +34,7 @@ export const globalVariables = useThemeCache(() => {
     colorPrimary = initialMainColors.primary;
 
     const generatedMainColors = makeThemeVars("mainColors", {
-        secondary: colorPrimary.lightness() >= 0.5 ? colorPrimary.darken(0.05) : colorPrimary.lighten(0.05),
+        secondary: emphasizeLightness(colorPrimary, 0.15),
     });
 
     const mainColors = {
@@ -98,7 +93,7 @@ export const globalVariables = useThemeCache(() => {
     });
 
     const border = makeThemeVars("border", {
-        color: mixBgAndFg(0.24),
+        color: mixBgAndFg(0.15),
         width: 1,
         style: "solid",
         radius: 6,
@@ -157,6 +152,10 @@ export const globalVariables = useThemeCache(() => {
             normal: 400,
             semiBold: 600,
             bold: 700,
+        },
+
+        families: {
+            body: ["Open Sans"],
         },
     });
 
@@ -246,7 +245,7 @@ export const globalVariables = useThemeCache(() => {
         },
     });
 
-    const overlayBg = modifyColorBasedOnLightness(mainColors.fg, mainColors.fg, 0.5, true);
+    const overlayBg = modifyColorBasedOnLightness(mainColors.fg, 0.5);
     const overlay = makeThemeVars("overlay", {
         dropShadow: `2px -2px 5px ${colorOut(overlayBg.fade(0.3))}`,
         bg: overlayBg,
@@ -289,6 +288,17 @@ export const globalVariables = useThemeCache(() => {
         size: 1,
     });
 
+    // https://medium.com/@clagnut/all-you-need-to-know-about-hyphenation-in-css-2baee2d89179
+    // Requires language set on <html> tag
+    const userContentHyphenation = makeThemeVars("userContentHyphenation", {
+        minimumCharactersToHyphenate: 6,
+        minimumCharactersBeforeBreak: 3,
+        minimumCharactersAfterBreak: 3,
+        maximumConsecutiveBrokenLines: 2,
+        avoidLastWordToBeBroken: true,
+        hyphenationZone: "6em",
+    });
+
     return {
         utility,
         elementaryColors,
@@ -315,6 +325,7 @@ export const globalVariables = useThemeCache(() => {
         mixPrimaryAndFg,
         mixPrimaryAndBg,
         separator,
+        userContentHyphenation,
     };
 });
 

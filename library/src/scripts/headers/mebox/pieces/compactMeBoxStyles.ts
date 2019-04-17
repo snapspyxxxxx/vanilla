@@ -66,7 +66,8 @@ export const compactMeBoxClasses = useThemeCache(() => {
     });
 
     const tabPanels = style("tabPanels", {
-        height: calc(`100vh - ${vars.tab.height}`),
+        height: calc(`100vh - ${unit(vars.tab.height)}`),
+        overflow: "auto",
         borderTop: `1px solid ${globalVars.overlay.border.color.toString()}`,
     });
 
@@ -84,5 +85,16 @@ export const compactMeBoxClasses = useThemeCache(() => {
         flexGrow: 1,
     });
 
-    return { root, openButton, contents, closeModal, tabList, tabPanels, tabButton, tabButtonContent, panel, body };
+    return {
+        root,
+        openButton,
+        contents,
+        closeModal,
+        tabList,
+        tabPanels,
+        tabButton,
+        tabButtonContent,
+        panel,
+        body,
+    };
 });

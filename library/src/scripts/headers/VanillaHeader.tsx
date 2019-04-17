@@ -4,7 +4,7 @@
  * @license GPL-2.0-only
  */
 
-import UsersModel, { IInjectableUserState } from "@library/features/users/UsersModel";
+import { IInjectableUserState, mapUsersStoreState, isUserGuest } from "@library/features/users/userModel";
 import MeBox from "@library/headers/mebox/MeBox";
 import CompactMeBox from "@library/headers/mebox/pieces/CompactMeBox";
 import CompactSearch from "@library/headers/mebox/pieces/CompactSearch";
@@ -70,7 +70,7 @@ export class VanillaHeader extends React.Component<IProps, IState> {
         const { isFixed } = this.props;
         const currentUser = this.props.currentUser.data;
         const isMobile = this.props.device === Devices.MOBILE;
-        const isGuest = currentUser && UsersModel && currentUser.userID === UsersModel.GUEST_ID;
+        const isGuest = isUserGuest(currentUser);
         const classes = vanillaHeaderClasses();
         const showMobileDropDown = isMobile && !this.state.openSearch && this.props.title;
         const classesMeBox = meBoxClasses();
@@ -151,12 +151,15 @@ export class VanillaHeader extends React.Component<IProps, IState> {
                                         classes.topElement,
                                         classes.searchCancel,
                                     )}
-                                    cancelContentClassName="meBox-contentHover"
+                                    cancelContentClassName="meBox-buttonContent"
                                     buttonClass={classes.button}
                                     showingSuggestions={this.state.showingSuggestions}
                                     onOpenSuggestions={this.setOpenSuggestions}
                                     onCloseSuggestions={this.setCloseSuggestions}
-                                    buttonContentClassName={classNames(classesMeBox.buttonContent)}
+                                    buttonContentClassName={classNames(
+                                        classesMeBox.buttonContent,
+                                        "meBox-buttonContent",
+                                    )}
                                     clearButtonClass={classes.clearButtonClass}
                                 />
 
@@ -260,5 +263,5 @@ export class VanillaHeader extends React.Component<IProps, IState> {
     };
 }
 
-const withRedux = connect(UsersModel.mapStateToProps);
+const withRedux = connect(mapUsersStoreState);
 export default withRedux(withPages(withDevice(VanillaHeader)));

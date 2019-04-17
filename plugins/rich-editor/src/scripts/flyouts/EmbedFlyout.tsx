@@ -10,7 +10,6 @@ import { isAllowedUrl, t } from "@library/utility/appUtils";
 import { getRequiredID, IRequiredComponentID } from "@library/utility/idUtils";
 import { IWithEditorProps, withEditor } from "@rich-editor/editor/context";
 import EmbedInsertionModule from "@rich-editor/quill/EmbedInsertionModule";
-import FlyoutToggle, { IFlyoutToggleChildParameters } from "@library/flyouts/FlyoutToggle";
 import { forceSelectionUpdate } from "@rich-editor/quill/utility";
 import Button from "@library/forms/Button";
 import { embed } from "@library/icons/editorIcons";
@@ -18,13 +17,19 @@ import classNames from "classnames";
 import { richEditorClasses } from "@rich-editor/editor/richEditorClasses";
 import { ButtonTypes } from "@library/forms/buttonStyles";
 import { insertMediaClasses } from "@rich-editor/flyouts/pieces/insertMediaClasses";
-import Flyout from "@rich-editor/flyouts/pieces/Flyout";
+import { IconForButtonWrap } from "@rich-editor/editor/pieces/IconForButtonWrap";
+import DropDown from "@library/flyouts/DropDown";
+import { Devices, IDeviceProps, withDevice } from "@library/layout/DeviceContext";
+import FrameHeader from "@library/layout/frame/FrameHeader";
+import FrameBody from "@library/layout/frame/FrameBody";
+import FrameFooter from "@library/layout/frame/FrameFooter";
+import Frame from "@library/layout/frame/Frame";
+import { style } from "typestyle";
 
-interface IProps extends IWithEditorProps {
+interface IProps extends IWithEditorProps, IDeviceProps {
     disabled?: boolean;
     renderAbove?: boolean;
     renderLeft?: boolean;
-    openAsModal?: boolean;
     legacyMode: boolean;
 }
 
@@ -36,6 +41,7 @@ interface IState extends IRequiredComponentID {
 
 export class EmbedFlyout extends React.PureComponent<IProps, IState> {
     private embedModule: EmbedInsertionModule;
+    private inputRef = React.createRef<HTMLInputElement>();
 
     public constructor(props) {
         super(props);
@@ -56,99 +62,61 @@ export class EmbedFlyout extends React.PureComponent<IProps, IState> {
     }
 
     public render() {
-        const title = t("Insert Media");
-        const Icon = embed();
-        const legacyMode = this.props.legacyMode;
         const classesRichEditor = richEditorClasses(this.props.legacyMode);
         const classesInsertMedia = insertMediaClasses();
-
         return (
-            <FlyoutToggle
-                id={this.state.id}
-                className="embedDialogue"
-                onClose={this.clearInput}
-                buttonClassName={classNames("richEditor-button", "richEditor-embedButton", classesRichEditor.button)}
-                onVisibilityChange={forceSelectionUpdate}
-                disabled={this.props.disabled}
-                name={t("Embed")}
-                buttonContents={Icon}
-                buttonBaseClass={ButtonTypes.CUSTOM}
-                renderAbove={!!this.props.renderAbove}
-                renderLeft={!!this.props.renderLeft}
-                openAsModal={legacyMode ? false : !!this.props.openAsModal}
-            >
-                {(params: IFlyoutToggleChildParameters) => {
-                    const { initialFocusRef, closeMenuHandler, isVisible } = params;
-
-                    const body = (
-                        <React.Fragment>
-                            <p
-                                id={this.descriptionID}
-                                className={classNames("insertMedia-description", classesRichEditor.flyoutDescription)}
-                            >
+            <>
+                <DropDown
+                    id={this.state.id}
+                    name={t("Insert Media")}
+                    buttonClassName={classNames(
+                        "richEditor-button",
+                        "richEditor-embedButton",
+                        classesRichEditor.button,
+                    )}
+                    title={t("Insert Media")}
+                    paddedList={true}
+                    onClose={this.clearInput}
+                    onVisibilityChange={forceSelectionUpdate}
+                    disabled={this.props.disabled}
+                    buttonContents={<IconForButtonWrap icon={embed()} />}
+                    buttonBaseClass={ButtonTypes.CUSTOM}
+                    renderAbove={!!this.props.renderAbove}
+                    renderLeft={!!this.props.renderLeft}
+                    selfPadded={true}
+                    initialFocusElement={this.inputRef.current}
+                >
+                    <Frame>
+                        <FrameBody>
+                            <p className={style({ marginTop: 6, marginBottom: 6 })}>
                                 {t("Paste the URL of the media you want.")}
                             </p>
                             <input
-                                className={classNames("InputBox", { inputText: !this.props.legacyMode })}
+                                className={classNames("InputBox", classesInsertMedia.insert, {
+                                    inputText: !this.props.legacyMode,
+                                })}
                                 placeholder={t("http://")}
                                 value={this.state.url}
                                 onChange={this.inputChangeHandler}
                                 onKeyDown={this.buttonKeyDownHandler}
                                 aria-labelledby={this.titleID}
                                 aria-describedby={this.descriptionID}
-                                ref={initialFocusRef}
+                                ref={this.inputRef}
                             />
-                        </React.Fragment>
-                    );
-
-                    // The blur handler goes on the link if the button is disabled.
-                    // We want it to be on the last element in the popover.
-                    const footer = (
-                        <React.Fragment>
-                            {legacyMode ? (
-                                <input
-                                    type="button"
-                                    className={classNames(
-                                        "Button Primary",
-                                        "insertMedia-insert",
-                                        classesInsertMedia.insert,
-                                    )}
-                                    value={"Insert"}
-                                    disabled={!this.state.isInputValid}
-                                    aria-label={"Insert Media"}
-                                    onClick={this.buttonClickHandler}
-                                />
-                            ) : (
-                                <Button
-                                    className={classNames("insertMedia-insert", classesInsertMedia.insert)}
-                                    baseClass={ButtonTypes.PRIMARY}
-                                    disabled={!this.state.isInputValid}
-                                    onClick={this.buttonClickHandler}
-                                >
-                                    {t("Insert")}
-                                </Button>
-                            )}
-                        </React.Fragment>
-                    );
-
-                    return (
-                        <Flyout
-                            id={params.id}
-                            descriptionID={this.descriptionID}
-                            titleID={this.titleID}
-                            title={title}
-                            body={body}
-                            footer={footer}
-                            footerClass={classesInsertMedia.footer}
-                            additionalClassRoot="insertMedia"
-                            onCloseClick={closeMenuHandler}
-                            isVisible={isVisible}
-                            renderAbove={!!this.props.renderAbove}
-                            renderLeft={!!this.props.renderLeft}
-                        />
-                    );
-                }}
-            </FlyoutToggle>
+                        </FrameBody>
+                        <FrameFooter>
+                            <Button
+                                className={classNames("insertMedia-insert", classesInsertMedia.button)}
+                                baseClass={ButtonTypes.TEXT_PRIMARY}
+                                disabled={!this.state.isInputValid}
+                                onClick={this.buttonClickHandler}
+                            >
+                                {t("Insert")}
+                            </Button>
+                        </FrameFooter>
+                    </Frame>
+                </DropDown>
+            </>
         );
     }
 
@@ -200,4 +168,4 @@ export class EmbedFlyout extends React.PureComponent<IProps, IState> {
     }
 }
 
-export default withEditor<IProps>(EmbedFlyout);
+export default withDevice(withEditor<IProps>(EmbedFlyout));

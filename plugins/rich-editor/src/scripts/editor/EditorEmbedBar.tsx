@@ -44,7 +44,7 @@ export function EditorEmbedBar(props: IProps) {
             >
                 {isMobile && (
                     <li className={classNames("richEditor-menuItem", classesRichEditor.menuItem)} role="menuitem">
-                        <ParagraphMenusBarToggle disabled={isLoading} mobile={true} />
+                        <ParagraphMenusBarToggle renderAbove={legacyMode} disabled={isLoading} mobile={true} />
                     </li>
                 )}
                 {!isMobile && (
@@ -66,7 +66,7 @@ export function EditorEmbedBar(props: IProps) {
                 </Permission>
 
                 <li className={classNames("richEditor-menuItem", classesRichEditor.menuItem)} role="menuitem">
-                    <EmbedFlyout disabled={isLoading} />
+                    <EmbedFlyout disabled={isLoading} renderAbove={legacyMode} />
                 </li>
 
                 <Permission permission="uploads.add">
