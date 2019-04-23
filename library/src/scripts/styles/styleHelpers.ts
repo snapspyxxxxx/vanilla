@@ -17,6 +17,7 @@ import {
     BackgroundSizeProperty,
     BorderRadiusProperty,
     BorderStyleProperty,
+    BorderTopRightRadiusProperty,
     BorderWidthProperty,
     BottomProperty,
     ContentProperty,
@@ -37,6 +38,7 @@ import {
     TextAlignLastProperty,
     TextOverflowProperty,
     TextShadowProperty,
+    TextTransformProperty,
     UserSelectProperty,
     WhiteSpaceProperty,
 } from "csstype";
@@ -61,7 +63,7 @@ const fontFallbacks = [
     "Segoe UI Symbol",
 ];
 
-export const colorOut = (colorValue: ColorValues, makeImportant = false) => {
+export const colorOut = (colorValue: ColorValues | string, makeImportant = false) => {
     if (!colorValue) {
         return undefined;
     } else {
@@ -89,13 +91,7 @@ export function flexHelper() {
         };
     };
 
-    const spacer = () => {
-        return {
-            flex: 1,
-        };
-    };
-
-    return { middle, middleLeft, spacer };
+    return { middle, middleLeft };
 }
 
 export function srOnly() {
@@ -131,7 +127,7 @@ export function fontFamilyWithDefaults(fontFamilies: string[]): string {
         .join(", ");
 }
 
-export function fullSizeOfParent() {
+export function fullSizeOfParent(): NestedCSSProperties {
     return {
         position: "absolute",
         display: "block",
@@ -328,20 +324,33 @@ interface ISingleBorderStyle {
     style?: BorderStyleProperty;
 }
 
-export interface IBorderStyles extends ISingleBorderStyle {
+export interface IBordersSameAllSidesStyles extends ISingleBorderStyle {
     radius?: BorderRadiusProperty<TLength>;
 }
 
+type radiusType = BorderRadiusProperty<TLength> | IBorderRadii;
+
+interface IBorderStyles extends ISingleBorderStyle {
+    all?: ISingleBorderStyle;
+    topBottom?: ISingleBorderStyle;
+    leftRight?: ISingleBorderStyle;
+    top?: ISingleBorderStyle;
+    bottom?: ISingleBorderStyle;
+    left?: ISingleBorderStyle;
+    right?: ISingleBorderStyle;
+    radius?: radiusType;
+}
+
 interface IBorderRadii {
-    all?: BorderRadiusProperty<TLength>;
-    top?: BorderRadiusProperty<TLength>;
-    bottom?: BorderRadiusProperty<TLength>;
-    left?: BorderRadiusProperty<TLength>;
-    right?: BorderRadiusProperty<TLength>;
-    topRight?: BorderRadiusProperty<TLength>;
-    topLeft?: BorderRadiusProperty<TLength>;
-    bottomLeft?: BorderRadiusProperty<TLength>;
-    bottomRight?: BorderRadiusProperty<TLength>;
+    all?: BorderRadiusProperty<TLength> | number;
+    top?: BorderRadiusProperty<TLength> | number;
+    bottom?: BorderRadiusProperty<TLength> | number;
+    left?: BorderRadiusProperty<TLength> | number;
+    right?: BorderRadiusProperty<TLength> | number;
+    topRight?: BorderRadiusProperty<TLength> | number;
+    topLeft?: BorderRadiusProperty<TLength> | number;
+    bottomLeft?: BorderRadiusProperty<TLength> | number;
+    bottomRight?: BorderRadiusProperty<TLength> | number;
 }
 
 const ifExistsWithFallback = checkProp => {
@@ -368,23 +377,145 @@ export const borderRadii = (props: IBorderRadii) => {
     };
 };
 
-export const borders = (props: IBorderStyles = {}, debug: boolean = false) => {
-    const vars = globalVariables();
-
-    const values = {
-        borderColor: props.color !== undefined ? colorOut(props.color as any) : colorOut(vars.border.color),
-        borderWidth: props.width !== undefined ? unit(props.width) : unit(vars.border.width),
-        borderStyle: props.style !== undefined ? props.style : vars.border.style,
-        borderRadius: props.radius !== undefined ? unit(props.radius) : unit(vars.border.radius),
-    };
-    return values;
+const borderStylesFallbacks = (fallbacks: any[], ultimateFallback, unitFunction?: (value: any) => string) => {
+    let output = ultimateFallback;
+    const convert = unitFunction ? unitFunction : value => value.toString();
+    try {
+        const BreakException = {};
+        fallbacks.forEach((style, key) => {
+            if (!!style) {
+                output = style;
+                throw BreakException;
+            }
+        });
+    } catch (e) {
+        // break out of loop
+    }
+    return convert(output);
 };
 
-export const singleBorder = (styles: ISingleBorderStyle = {}) => {
+export const borders = (props: IBorderStyles = {}, debug: boolean = false) => {
+    const globalVars = globalVariables();
+
+    const output = {
+        borderLeft: undefined,
+        borderRight: undefined,
+        borderTop: undefined,
+        borderBottom: undefined,
+    } as any;
+
+    // Set border radii
+    let globalRadiusFound = false;
+    let specificRadiusFound = false;
+    if (typeof props.radius !== "object") {
+        output.borderRadius = unit(props.radius as BorderRadiusProperty<TLength>);
+        globalRadiusFound = true;
+    } else {
+        if (props.radius.all) {
+            globalRadiusFound = true;
+            output.borderRadius = unit(props.radius as BorderRadiusProperty<TLength>);
+        } else {
+            if (props.radius.top) {
+                specificRadiusFound = true;
+                output.borderTopRightRadius = unit(props.radius.top);
+                output.borderTopLeftRadius = unit(props.radius.top);
+            }
+            if (props.radius.bottom) {
+                specificRadiusFound = true;
+                output.borderBottomRightRadius = unit(props.radius.bottom);
+                output.borderBottomLeftRadius = unit(props.radius.bottom);
+            }
+            if (props.radius.right) {
+                specificRadiusFound = true;
+                output.borderTopRightRadius = unit(props.radius.right);
+                output.borderBottomRightRadius = unit(props.radius.right);
+            }
+            if (props.radius.left) {
+                specificRadiusFound = true;
+                output.borderTopLeftRadius = unit(props.radius.left);
+                output.borderBottomLeftRadius = unit(props.radius.left);
+            }
+            if (props.radius.topRight) {
+                specificRadiusFound = true;
+                output.borderTopRightRadius = unit(props.radius.topRight);
+            }
+            if (props.radius.topLeft) {
+                specificRadiusFound = true;
+                output.borderTopLeftRadius = unit(props.radius.topLeft);
+            }
+            if (props.radius.bottomRight) {
+                specificRadiusFound = true;
+                output.borderbottomRightRadius = unit(props.radius.bottomRight);
+            }
+            if (props.radius.topLeft) {
+                specificRadiusFound = true;
+                output.borderbottomLeftRadius = unit(props.radius.bottomLeft);
+            }
+        }
+    }
+    // Set fallback border radius if none found
+    if (!globalRadiusFound && !specificRadiusFound) {
+        output.borderRadius = unit(globalVars.border.radius);
+    }
+
+    // Set border styles
+    let borderSet = false;
+    if (props.all) {
+        output.borderTop = singleBorder(props.all);
+        output.borderRight = singleBorder(props.all);
+        output.borderBottom = singleBorder(props.all);
+        output.borderLeft = singleBorder(props.all);
+        borderSet = true;
+    }
+
+    if (props.topBottom) {
+        output.borderTop = singleBorder(props.topBottom);
+        output.borderBottom = singleBorder(props.topBottom);
+        borderSet = true;
+    }
+
+    if (props.leftRight) {
+        output.borderLeft = singleBorder(props.leftRight);
+        output.borderRight = singleBorder(props.leftRight);
+        borderSet = true;
+    }
+
+    if (props.top) {
+        output.borderTop = singleBorder(props.top);
+        borderSet = true;
+    }
+
+    if (props.bottom) {
+        output.borderBottom = singleBorder(props.bottom);
+        borderSet = true;
+    }
+
+    if (props.right) {
+        output.borderRight = singleBorder(props.right);
+        borderSet = true;
+    }
+
+    if (props.left) {
+        output.borderLeft = singleBorder(props.left);
+        borderSet = true;
+    }
+
+    // If nothing was found, look for globals and fallback to global styles.
+    if (!borderSet) {
+        output.borderStyle = props.style ? props.style : globalVars.border.style;
+        output.borderColor = props.color ? colorOut(props.color) : colorOut(globalVars.border.color);
+        output.borderWidth = props.width ? unit(props.width) : unit(globalVars.border.width);
+    }
+
+    return output;
+};
+
+export const singleBorder = (styles?: ISingleBorderStyle) => {
     const vars = globalVariables();
-    return `${styles.style ? styles.style : vars.border.style} ${
-        styles.color ? colorOut(styles.color) : colorOut(vars.border.color)
-    } ${styles.width ? unit(styles.width) : unit(vars.border.width)}` as any;
+    const borderStyles = styles !== undefined ? styles : {};
+    return `${borderStyles.style ? borderStyles.style : vars.border.style} ${
+        borderStyles.color ? colorOut(borderStyles.color) : colorOut(vars.border.color)
+    } ${borderStyles.width ? unit(borderStyles.width) : unit(vars.border.width)}` as any;
 };
 
 export interface IButtonStates {
@@ -473,10 +604,10 @@ export const margins = (styles: IMargins): NestedCSSProperties => {
     const marginVals = {} as NestedCSSProperties;
 
     if (styles.all !== undefined) {
-        marginVals.paddingTop = unit(styles.all);
-        marginVals.paddingRight = unit(styles.all);
-        marginVals.paddingBottom = unit(styles.all);
-        marginVals.paddingLeft = unit(styles.all);
+        marginVals.marginTop = unit(styles.all);
+        marginVals.marginRight = unit(styles.all);
+        marginVals.marginBottom = unit(styles.all);
+        marginVals.marginLeft = unit(styles.all);
     }
 
     if (styles.vertical !== undefined) {
@@ -869,11 +1000,12 @@ export const userSelect = (value: UserSelectProperty = "none", isImportant: bool
 export interface IFont {
     color?: ColorValues;
     size?: FontSizeProperty<TLength>;
-    weight?: FontWeightProperty;
+    weight?: FontWeightProperty | number;
     lineHeight?: LineHeightProperty<TLength>;
     shadow?: TextShadowProperty;
     align?: TextAlignLastProperty;
     family?: FontFamilyProperty[];
+    transform?: TextTransformProperty;
 }
 
 export const fonts = (props: IFont) => {
@@ -885,6 +1017,7 @@ export const fonts = (props: IFont) => {
         const textAlign = props.align !== undefined ? props.align : undefined;
         const textShadow = props.shadow !== undefined ? props.shadow : undefined;
         const fontFamily = props.family !== undefined ? fontFamilyWithDefaults(props.family) : undefined;
+        const textTransform = props.transform !== undefined ? props.transform : undefined;
         return {
             color,
             fontSize,
@@ -893,6 +1026,7 @@ export const fonts = (props: IFont) => {
             textAlign,
             textShadow,
             fontFamily,
+            textTransform,
         } as NestedCSSProperties;
     } else {
         return {} as NestedCSSProperties;

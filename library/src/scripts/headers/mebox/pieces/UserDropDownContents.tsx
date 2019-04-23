@@ -13,8 +13,6 @@ import DropDownItemLinkWithCount from "@library/flyouts/items/DropDownItemLinkWi
 import DropDownItemSeparator from "@library/flyouts/items/DropDownItemSeparator";
 import DropDownSection from "@library/flyouts/items/DropDownSection";
 import DropDownUserCard from "@library/flyouts/items/DropDownUserCard";
-import Frame from "@library/layout/frame/Frame";
-import FrameBody from "@library/layout/frame/FrameBody";
 import { frameBodyClasses } from "@library/layout/frame/frameStyles";
 import { ICoreStoreState } from "@library/redux/reducerRegistry";
 import { t } from "@library/utility/appUtils";
@@ -37,10 +35,9 @@ function UserDropDownContents(props: IProps) {
     };
 
     const classesDropDown = dropDownClasses();
-    const classesFrameBody = frameBodyClasses();
 
     return (
-        <div className={classNames(props.className, classesDropDown.verticalPadding)}>
+        <div className={classNames(classesDropDown.verticalPadding, props.className)}>
             <DropDownUserCard className="userDropDown-userCard" />
             <DropDownItemSeparator />
             <DropDownItemLink to="/profile/edit" name={t("Edit Profile")} />

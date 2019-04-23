@@ -12,6 +12,7 @@ export interface IFrameBodyProps {
     className?: string;
     selfPadded?: boolean;
     children: React.ReactNode;
+    scrollable?: boolean; // DON'T use at the same time as the Modal scrollable.
 }
 
 /**

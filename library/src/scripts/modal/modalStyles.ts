@@ -4,13 +4,21 @@
  * @license GPL-2.0-only
  */
 
-import { globalVariables } from "@library/styles/globalStyleVars";
-import { borders, colorOut, margins, unit, flexHelper, sticky } from "@library/styles/styleHelpers";
-import { shadowHelper } from "@library/styles/shadowHelpers";
-import { styleFactory, useThemeCache, variableFactory } from "@library/styles/styleUtils";
-import { important, percent, viewHeight, viewWidth } from "csx";
-import { layoutVariables } from "@library/layout/layoutStyles";
 import { vanillaHeaderVariables } from "@library/headers/vanillaHeaderStyles";
+import { layoutVariables } from "@library/layout/layoutStyles";
+import { globalVariables } from "@library/styles/globalStyleVars";
+import { shadowHelper } from "@library/styles/shadowHelpers";
+import {
+    borders,
+    colorOut,
+    fullSizeOfParent,
+    margins,
+    sticky,
+    unit,
+    absolutePosition,
+} from "@library/styles/styleHelpers";
+import { styleFactory, useThemeCache, variableFactory } from "@library/styles/styleUtils";
+import { calc, percent, translate, translateX, viewHeight } from "csx";
 
 export const modalVariables = useThemeCache(() => {
     const globalVars = globalVariables();
@@ -34,7 +42,7 @@ export const modalVariables = useThemeCache(() => {
     });
 
     const spacing = makeThemeVars("spacing", {
-        horizontalMargin: globalVars.spacer.size / 2,
+        horizontalMargin: 16,
     });
 
     const border = makeThemeVars("border", {
@@ -69,94 +77,107 @@ export const modalVariables = useThemeCache(() => {
 });
 
 export const modalClasses = useThemeCache(() => {
-    const vars = modalVariables();
     const globalVars = globalVariables();
+    const vars = modalVariables();
     const style = styleFactory("modal");
     const mediaQueries = layoutVariables().mediaQueries();
     const shadows = shadowHelper();
     const headerVars = vanillaHeaderVariables();
 
-    const overlay = style("overlay", flexHelper().middle(), {
+    const overlay = style("overlay", {
         position: "fixed",
+        // Viewport units are useful here because
+        // we're actually fine this being taller than the initially visible viewport.
         height: viewHeight(100),
-        width: viewWidth(100),
+        width: percent(100),
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        background: vars.colors.overlayBg.toString(),
+        background: colorOut(vars.colors.overlayBg),
         zIndex: 10,
     });
 
     const root = style({
-        display: "block",
-        position: "relative",
-        maxHeight: percent(100),
+        display: "flex",
+        flexDirection: "column",
+        width: percent(100),
+        maxWidth: percent(100),
+        maxHeight: viewHeight(80),
         zIndex: 1,
         backgroundColor: colorOut(vars.colors.bg),
-        boxSizing: "border-box",
+        position: "fixed",
+        top: percent(50),
+        left: percent(50),
+        bottom: "initial",
+        overflow: "hidden",
+        // NOTE: This transform can cause issues if anything inside of us needs fixed positioning.
+        // See http://meyerweb.com/eric/thoughts/2011/09/12/un-fixing-fixed-elements-with-css-transforms/
+        // See also https://www.w3.org/TR/2009/WD-css3-2d-transforms-20091201/#introduction
+        // This is why fullscreen unsets the transforms.
+        transform: translate(`-50%`, `-50%`),
+        ...margins({ all: "auto" }),
+
         $nest: {
-            "*": {
-                boxSizing: "border-box",
-            },
             "&&.isFullScreen": {
-                overflow: "hidden",
                 width: percent(100),
-                height: viewHeight(100),
-                maxHeight: viewHeight(100),
+                height: percent(100),
+                maxHeight: percent(100),
+                maxWidth: percent(100),
                 borderRadius: 0,
                 border: "none",
+                top: 0,
+                bottom: 0,
+                transform: "none",
+                left: 0,
+                right: 0,
             },
             "&.isLarge": {
                 width: unit(vars.sizing.large),
-                ...margins({
-                    left: vars.spacing.horizontalMargin,
-                    right: vars.spacing.horizontalMargin,
-                }),
+                maxWidth: calc(`100% - ${unit(vars.spacing.horizontalMargin * 2)}`),
             },
             "&.isMedium": {
                 width: unit(vars.sizing.medium),
-                ...margins({
-                    left: vars.spacing.horizontalMargin,
-                    right: vars.spacing.horizontalMargin,
-                }),
+                maxWidth: calc(`100% - ${unit(vars.spacing.horizontalMargin * 2)}`),
             },
             "&.isSmall": {
                 width: unit(vars.sizing.small),
-                ...margins({
-                    left: vars.spacing.horizontalMargin,
-                    right: vars.spacing.horizontalMargin,
-                }),
+                maxWidth: calc(`100% - ${unit(vars.spacing.horizontalMargin * 2)}`),
             },
-            "&.isSidePanel": {
-                marginLeft: unit(vars.dropDown.padding),
+            "&&&.isSidePanel": {
+                left: unit(vars.dropDown.padding),
+                width: calc(`100% - ${vars.dropDown.padding}px`),
+                display: "flex",
+                flexDirection: "column",
+                top: 0,
+                bottom: 0,
+                right: 0,
+                transform: "none",
             },
-            "&.isDropDown": {
-                overflow: "auto",
+            "&&.isDropDown": {
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: globalVars.gutter.size,
                 width: percent(100),
                 marginBottom: "auto",
-                maxHeight: viewHeight(100),
+                transform: "none",
+                maxHeight: percent(100),
+                borderTopLeftRadius: 0,
+                borderTopRightRadius: 0,
             },
             "&.isShadowed": {
                 ...shadows.dropDown(),
                 ...borders(),
             },
-            "&.hasNoScroll": {
-                overflow: important("hidden"),
-            },
         },
     });
 
     const scroll = style("scroll", {
+        // ...absolutePosition.fullSizeOfParent(),
+        width: percent(100),
+        maxHeight: percent(100),
         overflow: "auto",
-        $nest: {
-            "& > .container": {
-                paddingTop: unit(globalVars.overlay.fullPageHeadingSpacer),
-            },
-            "&.hasError > .container": {
-                paddingTop: 0,
-            },
-        },
     });
 
     const content = style("content", shadows.modal());

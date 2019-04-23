@@ -57,15 +57,39 @@ export const frameVariables = useThemeCache(() => {
 export const frameClasses = useThemeCache(() => {
     const vars = frameVariables();
     const style = styleFactory("frame");
+
+    const headerWrap = style("headerWrap", {
+        background: colorOut(vars.colors.bg),
+        zIndex: 2,
+        willChange: "height",
+    });
+    const bodyWrap = style("bodyWrap", {
+        background: colorOut(vars.colors.bg),
+    });
+    const footerWrap = style("footerWrap", {
+        background: colorOut(vars.colors.bg),
+        zIndex: 2,
+        willChange: "height",
+    });
+
     const root = style({
+        backgroundColor: colorOut(vars.colors.bg),
+        maxHeight: percent(100),
+        height: percent(100),
+        borderRadius: unit(vars.border.radius),
+        width: percent(100),
+        position: "relative",
         display: "flex",
         flexDirection: "column",
-        position: "relative",
-        backgroundColor: colorOut(vars.colors.bg),
-        maxHeight: viewHeight(100),
-        borderRadius: unit(vars.border.radius),
+        $nest: {
+            [`.${bodyWrap}`]: {
+                flex: 1,
+                overflow: "auto",
+            },
+        },
     });
-    return { root };
+
+    return { root, headerWrap, bodyWrap, footerWrap };
 });
 
 export const frameHeaderClasses = useThemeCache(() => {
@@ -80,7 +104,6 @@ export const frameHeaderClasses = useThemeCache(() => {
         alignItems: "center",
         flexWrap: "nowrap",
         width: percent(100),
-        minHeight: unit(vars.header.minHeight),
         color: colorOut(vars.colors.fg),
         zIndex: 1,
         borderBottom: singleBorder(),
@@ -125,22 +148,25 @@ export const frameHeaderClasses = useThemeCache(() => {
         textTransform: "uppercase",
         fontSize: unit(globalVars.fonts.size.small),
         color: colorOut(globalVars.mixBgAndFg(0.6)),
+        fontWeight: globalVars.fonts.weights.semiBold,
     });
 
+    const spacerWidth = globalVars.icon.sizes.large - (globalVars.gutter.half + globalVars.gutter.quarter);
     const leftSpacer = style("leftSpacer", {
         display: "block",
-        height: unit(formElVars.sizing.height),
-        flexBasis: unit(formElVars.sizing.height),
-        width: unit(formElVars.sizing.height),
+        height: unit(spacerWidth),
+        flexBasis: unit(spacerWidth),
+        width: unit(spacerWidth),
     });
 
     const action = style("action", {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        position: "relative",
         flexShrink: 1,
         height: unit(formElVars.sizing.height),
-        marginRight: unit(-6),
+        width: unit(spacerWidth),
         color: colorOut(vars.colors.fg),
         $nest: {
             "&:not(.focus-visible)": {
@@ -152,18 +178,24 @@ export const frameHeaderClasses = useThemeCache(() => {
         },
     });
 
-    return { root, backButton, heading, left, centred, leftSpacer, action };
+    return {
+        root,
+        backButton,
+        heading,
+        left,
+        centred,
+        leftSpacer,
+        action,
+    };
 });
 
 export const frameBodyClasses = useThemeCache(() => {
     const vars = frameVariables();
+    const globalVars = globalVariables();
     const style = styleFactory("frameBody");
 
     const root = style({
         position: "relative",
-        flexGrow: 1,
-        maxHeight: percent(100),
-        overflow: "auto",
         ...paddings({
             left: vars.spacing.padding,
             right: vars.spacing.padding,
@@ -175,10 +207,13 @@ export const frameBodyClasses = useThemeCache(() => {
                     right: 0,
                 }),
             },
-            "&.inheritHeight": {
+            "& > .inputBlock": {
                 $nest: {
-                    ".framePanel": {
-                        maxHeight: percent(100),
+                    "&.isFirst": {
+                        marginTop: unit(globalVars.gutter.half),
+                    },
+                    "&.isLast": {
+                        marginBottom: unit(globalVars.gutter.half),
                     },
                 },
             },
@@ -205,35 +240,6 @@ export const frameBodyClasses = useThemeCache(() => {
     return { root, noContentMessage, contents };
 });
 
-export const framePanelClasses = useThemeCache(() => {
-    const vars = frameVariables();
-    const globalVars = globalVariables();
-    const style = styleFactory("framePanel");
-
-    const root = style({
-        position: "relative",
-        flexGrow: 1,
-        height: percent(100),
-        backgroundColor: colorOut(vars.colors.bg),
-        overflow: "auto",
-        maxHeight: calc(`100vh - ${unit(vars.header.minHeight + vars.footer.minHeight + vars.spacing.padding * 2)}`),
-
-        $nest: {
-            "& > .inputBlock": {
-                $nest: {
-                    "&.isFirst": {
-                        marginTop: unit(globalVars.gutter.half),
-                    },
-                    "&.isLast": {
-                        marginBottom: unit(globalVars.gutter.half),
-                    },
-                },
-            },
-        },
-    });
-    return { root };
-});
-
 export const frameFooterClasses = useThemeCache(() => {
     const globalVars = globalVariables();
     const style = styleFactory("frameFooter");
@@ -247,13 +253,21 @@ export const frameFooterClasses = useThemeCache(() => {
         zIndex: 1,
         borderTop: singleBorder(),
         flexWrap: "wrap",
-        justifyContent: "flex-end",
+        justifyContent: "space-between",
         ...paddings({
             top: 0,
             bottom: 0,
             left: vars.footer.spacing,
             right: vars.footer.spacing,
         }),
+    });
+
+    const justifiedRight = style("justifiedRight", {
+        $nest: {
+            "&&": {
+                justifyContent: "flex-end",
+            },
+        },
     });
 
     const markRead = style("markRead", {
@@ -274,5 +288,5 @@ export const frameFooterClasses = useThemeCache(() => {
         paddingRight: important(0),
     });
 
-    return { root, markRead, selfPadded, actionButton };
+    return { root, markRead, selfPadded, actionButton, justifiedRight };
 });

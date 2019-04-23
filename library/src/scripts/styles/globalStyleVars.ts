@@ -34,7 +34,7 @@ export const globalVariables = useThemeCache(() => {
     colorPrimary = initialMainColors.primary;
 
     const generatedMainColors = makeThemeVars("mainColors", {
-        secondary: emphasizeLightness(colorPrimary, 0.15),
+        secondary: emphasizeLightness(colorPrimary, 0.05),
     });
 
     const mainColors = {
@@ -164,6 +164,7 @@ export const globalVariables = useThemeCache(() => {
             large: 32,
             default: 24,
             small: 16,
+            xSmall: 9.5,
         },
         color: mixBgAndFg(0.18),
     });
